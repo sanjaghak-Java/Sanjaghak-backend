@@ -1,7 +1,7 @@
-package com.example.Sanjaghak_Login.Repository;
+package com.example.Sanjaghak.Repository;
 
-import com.example.Sanjaghak_Login.Enum.User_role;
-import com.example.Sanjaghak_Login.model.UserAccounts;
+import com.example.Sanjaghak.Enum.User_role;
+import com.example.Sanjaghak.model.UserAccounts;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

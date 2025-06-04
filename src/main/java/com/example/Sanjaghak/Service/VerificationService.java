@@ -1,9 +1,9 @@
-package com.example.Sanjaghak_Login.Service;
+package com.example.Sanjaghak.Service;
 
-import com.example.Sanjaghak_Login.Repository.UserAccountsRepository;
-import com.example.Sanjaghak_Login.Repository.VerificationTokenRepository;
-import com.example.Sanjaghak_Login.model.UserAccounts;
-import com.example.Sanjaghak_Login.model.VerificationToken;
+import com.example.Sanjaghak.Repository.UserAccountsRepository;
+import com.example.Sanjaghak.Repository.VerificationTokenRepository;
+import com.example.Sanjaghak.model.UserAccounts;
+import com.example.Sanjaghak.model.VerificationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

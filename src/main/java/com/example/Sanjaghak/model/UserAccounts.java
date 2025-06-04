@@ -1,6 +1,6 @@
-package com.example.Sanjaghak_Login.model;
+package com.example.Sanjaghak.model;
 
-import com.example.Sanjaghak_Login.Enum.User_role;
+import com.example.Sanjaghak.Enum.User_role;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

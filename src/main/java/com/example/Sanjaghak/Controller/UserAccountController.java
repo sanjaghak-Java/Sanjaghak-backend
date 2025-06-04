@@ -1,15 +1,12 @@
-package com.example.Sanjaghak_Login.Controller;
+package com.example.Sanjaghak.Controller;
 
-import com.example.Sanjaghak_Login.Service.UserAccountsService;
-import com.example.Sanjaghak_Login.Service.VerificationService;
-import com.example.Sanjaghak_Login.model.UserAccounts;
-import com.example.Sanjaghak_Login.model.VerificationToken;
+import com.example.Sanjaghak.Service.UserAccountsService;
+import com.example.Sanjaghak.Service.VerificationService;
+import com.example.Sanjaghak.model.UserAccounts;
+import com.example.Sanjaghak.model.VerificationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -60,7 +57,7 @@ public class UserAccountController {
                     .body(Map.of("error", ex.getMessage()));
         }
     }
-
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/login/requestCode")
     public ResponseEntity<?> requestLoginCode(@RequestBody Map<String, String> request) {
         String email = request.get("email");

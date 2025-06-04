@@ -1,4 +1,4 @@
-package com.example.Sanjaghak_Login.Service;
+package com.example.Sanjaghak.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;

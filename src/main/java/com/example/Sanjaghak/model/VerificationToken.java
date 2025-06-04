@@ -1,4 +1,4 @@
-package com.example.Sanjaghak_Login.model;
+package com.example.Sanjaghak.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

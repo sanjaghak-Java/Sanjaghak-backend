@@ -1,4 +1,4 @@
-package com.example.Sanjaghak_Login;
+package com.example.Sanjaghak;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

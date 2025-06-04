@@ -1,7 +1,7 @@
-package com.example.Sanjaghak_Login.Repository;
+package com.example.Sanjaghak.Repository;
 
 
-import com.example.Sanjaghak_Login.model.VerificationToken;
+import com.example.Sanjaghak.model.VerificationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
