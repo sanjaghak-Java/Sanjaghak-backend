@@ -2,6 +2,7 @@ package com.example.Sanjaghak.Service;
 
 import com.example.Sanjaghak.Repository.BrandsRepository;
 import com.example.Sanjaghak.model.Brands;
+import com.example.Sanjaghak.security.jwt.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,14 @@ public class BrandService {
     @Autowired
     private BrandsRepository brandsRepository;
 
-    public Brands createBrand(Brands brand) {
+
+    public Brands createBrand(Brands brand,String token) {
+        String role = JwtUtil.extractUserRole(token);
+
+        if (!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("manager")) {
+            throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
+        }
+
         if (brandsRepository.existsByBrandName(brand.getBrandName())) {
             throw new IllegalArgumentException("برند مورد نظر از قبل وجود دارد !");
         }
@@ -28,7 +36,11 @@ public class BrandService {
     }
 
 
-    public Brands updateBrand(UUID id, Brands brand) {
+    public Brands updateBrand(UUID id, Brands brand, String token) {
+        String role = JwtUtil.extractUserRole(token);
+        if (!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("manager")) {
+            throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
+        }
         if(!brandsRepository.existsById(id)) {
             throw new IllegalArgumentException("برند مورد نظر پیدا نشد !");
         }

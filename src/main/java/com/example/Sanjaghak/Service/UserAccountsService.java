@@ -17,18 +17,39 @@ public class UserAccountsService {
         this.userAccountsRepository = userAccountsRepository;
     }
 
+//    public UserAccounts register(UserAccounts userAccounts) {
+//        if (userAccountsRepository.existsByEmail(userAccounts.getEmail()) &&
+//                userAccountsRepository.existsByPhoneNumber(userAccounts.getPhoneNumber())) {
+//            throw new RuntimeException("کاربر قبلاً ثبت شده است");
+//        }
+//
+//        if (userAccountsRepository.existsByEmail(userAccounts.getEmail())) {
+//            throw new RuntimeException("ایمیل قبلاً ثبت شده است");
+//        }
+//
+//        if (userAccountsRepository.existsByPhoneNumber(userAccounts.getPhoneNumber())) {
+//            throw new RuntimeException("شماره تلفن قبلاً ثبت شده است");
+//        }
+//
+//        userAccounts.setActive(true);
+//        userAccounts.setCreatedAt(LocalDateTime.now());
+//        userAccounts.setUpdatedAt(LocalDateTime.now());
+//
+//        return userAccountsRepository.save(userAccounts);
+//    }
+
     public UserAccounts register(UserAccounts userAccounts) {
         if (userAccountsRepository.existsByEmail(userAccounts.getEmail()) &&
                 userAccountsRepository.existsByPhoneNumber(userAccounts.getPhoneNumber())) {
-            throw new RuntimeException("کاربر قبلاً ثبت شده است");
+            throw new RuntimeException("کاربر قبلاً ثبت شده است.");
         }
 
         if (userAccountsRepository.existsByEmail(userAccounts.getEmail())) {
-            throw new RuntimeException("ایمیل قبلاً ثبت شده است");
+            throw new RuntimeException("ایمیل قبلاً استفاده شده است.");
         }
 
         if (userAccountsRepository.existsByPhoneNumber(userAccounts.getPhoneNumber())) {
-            throw new RuntimeException("شماره تلفن قبلاً ثبت شده است");
+            throw new RuntimeException("شماره تلفن قبلاً استفاده شده است.");
         }
 
         userAccounts.setActive(true);
@@ -37,6 +58,8 @@ public class UserAccountsService {
 
         return userAccountsRepository.save(userAccounts);
     }
+
+
 
     public Optional<UserAccounts> findByEmail(String email) {
         return userAccountsRepository.findByEmail(email);

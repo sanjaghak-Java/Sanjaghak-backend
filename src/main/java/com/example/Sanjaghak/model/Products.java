@@ -1,5 +1,6 @@
 package com.example.Sanjaghak.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -34,9 +35,15 @@ public class Products {
 
     private BigDecimal height;
 
-    private UUID createdBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    @JsonBackReference("productCreatedByRef")
+    private UserAccounts createdBy;
 
-    private UUID updatedBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    @JsonBackReference("productUpdatedByRef")
+    private UserAccounts updatedBy;
 
     private LocalDateTime createdAt;
 
@@ -90,14 +97,6 @@ public class Products {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public UUID getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
     }
 
     public BigDecimal getHeight() {
@@ -164,14 +163,6 @@ public class Products {
         this.updatedAt = updatedAt;
     }
 
-    public UUID getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(UUID updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
     public BigDecimal getWeight() {
         return weight;
     }
@@ -186,5 +177,21 @@ public class Products {
 
     public void setWidth(BigDecimal width) {
         this.width = width;
+    }
+
+    public UserAccounts getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UserAccounts createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public UserAccounts getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UserAccounts updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

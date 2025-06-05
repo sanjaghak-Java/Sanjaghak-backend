@@ -1,6 +1,6 @@
 package com.example.Sanjaghak.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -31,7 +31,6 @@ public class Brands {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "brands" , cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "brand-products")
     private List<Products> products = new ArrayList<>();
 
     public List<Products> getProducts() {
