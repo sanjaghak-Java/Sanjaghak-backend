@@ -14,6 +14,8 @@ public interface UserAccountsRepository extends JpaRepository<UserAccounts, UUID
     // جستجو با ایمیل
     Optional<UserAccounts> findByEmail(String email);
 
+    Optional<UserAccounts> findById(UUID id);
+
     // جستجو با شماره تلفن
     Optional<UserAccounts> findByPhoneNumber(String phoneNumber);
 

@@ -3,6 +3,7 @@ package com.example.Sanjaghak.Controller;
 import com.example.Sanjaghak.Service.ProductService;
 import com.example.Sanjaghak.model.Products;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,22 +18,49 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping("/addProduct")
-    public ResponseEntity<?> addProduct(@RequestBody Products product , @RequestParam UUID categoryId , @RequestParam UUID brandId) {
+    public ResponseEntity<?> addProduct(@RequestBody Products product
+            , @RequestParam UUID categoryId , @RequestParam UUID brandId,
+                                        @RequestHeader("Authorization") String authHeader) {
         try{
-            Products saveProduct = productService.createProduct(product, categoryId, brandId);
-            return ResponseEntity.ok().body(saveProduct);
-        }catch (RuntimeException e){
-            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+            String token = authHeader.replace("Bearer ", "");
+            Products saveProduct = productService.createProduct(product, categoryId, brandId,token);
+            return ResponseEntity.ok(Map.of("message", saveProduct));
+        }catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", ex.getMessage()));
+
+        } catch (RuntimeException ex) {
+            String msg = ex.getMessage();
+            if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", msg));
+
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("error", msg));
+            }
         }
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable UUID id , @RequestBody Products product, @RequestParam UUID categoryId , @RequestParam UUID brandId) {
+    public ResponseEntity<?> updateProduct(@PathVariable UUID id , @RequestBody Products product, @RequestParam UUID categoryId ,
+                                           @RequestParam UUID brandId,  @RequestHeader("Authorization") String authHeader) {
         try{
-            Products saveProduct = productService.updateProduct(id, product, categoryId, brandId);
-            return ResponseEntity.ok(saveProduct);
-        }catch (RuntimeException e){
-            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+            String token = authHeader.replace("Bearer ", "");
+            Products saveProduct = productService.updateProduct(id, product, categoryId, brandId, token);
+            return ResponseEntity.ok(Map.of("message", saveProduct));
+        }catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", ex.getMessage()));
+
+        } catch (RuntimeException ex) {
+            String msg = ex.getMessage();
+            if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", msg));
+
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("error", msg));
+            }
         }
     }
 

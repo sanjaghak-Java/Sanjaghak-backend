@@ -1,5 +1,6 @@
 package com.example.Sanjaghak.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -22,16 +23,29 @@ public class Categories {
 
     private boolean active;
 
-    private UUID createdBy;
-
-    private UUID updatedBy;
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by" , nullable = false)
+    @JsonBackReference("createdByRef")
+    private UserAccounts createdBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by" )
+    @JsonBackReference("updatedByRef")
+    private UserAccounts updatedBy;
+
+    public UserAccounts getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UserAccounts updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
     @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "category-products")
     private List<Products> products = new ArrayList<>();
 
     public List<Products> getProducts() {
@@ -74,14 +88,6 @@ public class Categories {
         this.createdAt = createdAt;
     }
 
-    public UUID getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public boolean isActive() {
         return active;
     }
@@ -89,7 +95,6 @@ public class Categories {
     public void setActive(boolean active) {
         this.active = active;
     }
-
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
@@ -99,11 +104,11 @@ public class Categories {
         this.updatedAt = updatedAt;
     }
 
-    public UUID getUpdatedBy() {
-        return updatedBy;
+    public UserAccounts getCreatedBy() {
+        return createdBy;
     }
 
-    public void setUpdatedBy(UUID updatedBy) {
-        this.updatedBy = updatedBy;
+    public void setCreatedBy(UserAccounts createdBy) {
+        this.createdBy = createdBy;
     }
 }

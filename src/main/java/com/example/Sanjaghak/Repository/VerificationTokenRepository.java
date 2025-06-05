@@ -15,4 +15,7 @@ public interface VerificationTokenRepository extends JpaRepository<VerificationT
     Optional<VerificationToken> findByEmailAndCode(String email, String code);
 
     Optional<VerificationToken> findByPhoneNumberAndCode(String phoneNumber, String code);
+
+    Optional<VerificationToken> findTopByEmailAndPhoneNumberOrderByExpiresAtDesc(String email, String phoneNumber);
+
 }

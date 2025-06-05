@@ -24,6 +24,16 @@ public class VerificationToken {
 
     private boolean verified = false;
 
+    private LocalDateTime createdAt;
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public String getCode() {
         return code;
     }

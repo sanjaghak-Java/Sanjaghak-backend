@@ -3,9 +3,12 @@ package com.example.Sanjaghak.Service;
 import com.example.Sanjaghak.Repository.BrandsRepository;
 import com.example.Sanjaghak.Repository.CategoryRepository;
 import com.example.Sanjaghak.Repository.ProductRepository;
+import com.example.Sanjaghak.Repository.UserAccountsRepository;
 import com.example.Sanjaghak.model.Brands;
 import com.example.Sanjaghak.model.Categories;
 import com.example.Sanjaghak.model.Products;
+import com.example.Sanjaghak.model.UserAccounts;
+import com.example.Sanjaghak.security.jwt.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,8 +29,17 @@ public class ProductService {
     @Autowired
     private BrandsRepository brandRepository;
 
-    public Products createProduct(Products product, UUID categoryId, UUID brandId) {
+    @Autowired
+    private UserAccountsRepository userAccountsRepository;
 
+    public Products createProduct(Products product, UUID categoryId, UUID brandId,String token) {
+
+        UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
+        String role = JwtUtil.extractUserRole(token);
+
+        if (!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("manager")) {
+            throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
+        }
 
         if(!categoryRepository.existsByCategoryId(categoryId)) {
             throw new IllegalArgumentException("دسته بندی مورد نظر یافت نشد");
@@ -36,6 +48,9 @@ public class ProductService {
         if(!brandRepository.existsByBrandId(brandId)) {
             throw new IllegalArgumentException("برند مورد نظر یافت نشد");
         }
+
+        UserAccounts user = userAccountsRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("کاربر پیدا نشد"));
 
         Categories category = categoryRepository.findById(categoryId)
                 .orElseThrow(()-> new EntityNotFoundException("دسته بندی مورد نظر پیدا نشد !"));
@@ -48,27 +63,36 @@ public class ProductService {
         product.setCategories(category);
         product.setBrands(brands);
         product.setCreatedAt(LocalDateTime.now());
+        product.setCreatedBy(user);
 
         return productRepository.save(product);
     }
 
 
-    public Products updateProduct(UUID productId, Products updatedProduct, UUID categoryId, UUID brandId) {
+    public Products updateProduct(UUID productId, Products updatedProduct, UUID categoryId, UUID brandId, String token) {
 
-        // بررسی وجود محصول
+        UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
+        String role = JwtUtil.extractUserRole(token);
+
+        if (!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("manager")) {
+            throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
+        }
+
         if (!productRepository.existsById(productId)) {
             throw new IllegalArgumentException("محصول مورد نظر یافت نشد.");
         }
 
-        // بررسی وجود دسته‌بندی
         if (!categoryRepository.existsByCategoryId(categoryId)) {
             throw new IllegalArgumentException("دسته‌بندی مورد نظر یافت نشد.");
         }
 
-        // بررسی وجود برند
         if (!brandRepository.existsByBrandId(brandId)) {
             throw new IllegalArgumentException("برند مورد نظر یافت نشد.");
         }
+
+        UserAccounts user = userAccountsRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("کاربر پیدا نشد"));
+
         Products existing = productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("محصول مورد نظر پیدا نشد !"));
 
@@ -87,11 +111,8 @@ public class ProductService {
         existing.setLength(updatedProduct.getLength());
         existing.setWidth(updatedProduct.getWidth());
         existing.setHeight(updatedProduct.getHeight());
-        existing.setUpdatedBy(updatedProduct.getUpdatedBy() );
+        existing.setUpdatedBy(user);
         existing.setActive(updatedProduct.isActive());
-        existing.setCreatedBy(updatedProduct.getCreatedBy());
-
-
         existing.setCategories(category);
         existing.setBrands(brand);
         existing.setUpdatedAt(LocalDateTime.now());
@@ -106,6 +127,4 @@ public class ProductService {
     public List<Products> getAllProducts() {
         return productRepository.findAll();
     }
-
-
 }

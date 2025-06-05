@@ -4,6 +4,7 @@ import com.example.Sanjaghak.Service.UserAccountsService;
 import com.example.Sanjaghak.Service.VerificationService;
 import com.example.Sanjaghak.model.UserAccounts;
 import com.example.Sanjaghak.model.VerificationToken;
+import com.example.Sanjaghak.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +27,11 @@ public class UserAccountController {
         this.verificationService = verificationService;
     }
 
+
     @PostMapping("/requestCode")
     public ResponseEntity<?> requestCode(@RequestBody UserAccounts request) {
-        verificationService.sendCode(request.getEmail(),request.getPhoneNumber());
-        return ResponseEntity.ok("کد تأیید ارسال شد");
+        verificationService.sendCode(request.getEmail(), request.getPhoneNumber());
+        return ResponseEntity.ok(Map.of("message", "کد تأیید ارسال شد", "expiresIn", "5 دقیقه"));
     }
 
     @PostMapping("/verifyCode")
@@ -40,23 +42,37 @@ public class UserAccountController {
                 request.getCode()
         );
         if (valid) {
-            return ResponseEntity.ok("کد صحیح است . به سنجاقک خوش اومدین!");
-
-        } else
-            return ResponseEntity.badRequest().body("کد اشتباه یا منقضی شده است!");
+            return ResponseEntity.ok("کد صحیح است. حالا می‌تونی ثبت‌نام کنی.");
+        } else {
+            return ResponseEntity.badRequest().body("کد اشتباه یا منقضی شده است.");
+        }
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserAccounts request) {
+        boolean isVerified = verificationService.isVerified(request.getEmail(), request.getPhoneNumber());
+
+        if (!isVerified) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", "کد تأیید هنوز وارد نشده یا نامعتبر است"));
+        }
         try {
             UserAccounts userAccounts = userAccountsService.register(request);
-            return ResponseEntity.ok(userAccounts);
+            String jwtToken = JwtUtil.generateToken(userAccounts);
+            return ResponseEntity.ok(Map.of(
+                    "message", "ورود موفقیت‌آمیز بود",
+                    "token", jwtToken
+            ));
         } catch (RuntimeException ex) {
             return ResponseEntity
                     .badRequest()
                     .body(Map.of("error", ex.getMessage()));
         }
     }
+
+
+
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/login/requestCode")
     public ResponseEntity<?> requestLoginCode(@RequestBody Map<String, String> request) {
@@ -100,7 +116,12 @@ public class UserAccountController {
             UserAccounts user = userOpt.get();
             user.setLastLogin(LocalDateTime.now());
             userAccountsService.save(user);
-            return ResponseEntity.ok("ورود موفقیت‌آمیز بود");
+
+            String jwtToken = JwtUtil.generateToken(user);
+            return ResponseEntity.ok(Map.of(
+                    "message", "ورود موفقیت‌آمیز بود",
+                    "token", jwtToken
+            ));
         } else {
             return ResponseEntity.badRequest().body("کد اشتباه یا منقضی شده است");
         }
