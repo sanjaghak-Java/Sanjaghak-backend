@@ -1,13 +1,13 @@
 package com.example.Sanjaghak.model;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
+
 
 @Entity
 public class Categories {
@@ -27,15 +27,17 @@ public class Categories {
 
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by" , nullable = false)
-    @JsonBackReference("createdByRef")
+
+    @ManyToOne
+    @JoinColumn(name = "created_by" )
+    @JsonIgnoreProperties({"firstName", "lastName", "email", "phoneNumber", "role", "lastLogin", "createdAt", "updatedAt", "active"})
     private UserAccounts createdBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "updated_by" )
-    @JsonBackReference("updatedByRef")
+    @JsonIgnoreProperties({"firstName", "lastName", "email", "phoneNumber", "role", "lastLogin", "createdAt", "updatedAt", "active"})
     private UserAccounts updatedBy;
+
 
     public UserAccounts getUpdatedBy() {
         return updatedBy;
@@ -43,17 +45,6 @@ public class Categories {
 
     public void setUpdatedBy(UserAccounts updatedBy) {
         this.updatedBy = updatedBy;
-    }
-
-    @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL)
-    private List<Products> products = new ArrayList<>();
-
-    public List<Products> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Products> products) {
-        this.products = products;
     }
 
     public String getCategoryDescription() {

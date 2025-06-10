@@ -1,12 +1,13 @@
 package com.example.Sanjaghak.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 import java.util.UUID;
+
 
 @Entity
 public class Products {
@@ -20,6 +21,8 @@ public class Products {
 
     @Column(unique = true)
     private String sku;
+
+    private String model;
 
     private BigDecimal price;
 
@@ -35,14 +38,14 @@ public class Products {
 
     private BigDecimal height;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "created_by")
-    @JsonBackReference("productCreatedByRef")
+    @JsonIgnoreProperties({"firstName", "lastName", "email", "phoneNumber", "role", "lastLogin", "createdAt", "updatedAt", "active"})
     private UserAccounts createdBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "updated_by")
-    @JsonBackReference("productUpdatedByRef")
+    @JsonIgnoreProperties({"firstName", "lastName", "email", "phoneNumber", "role", "lastLogin", "createdAt", "updatedAt", "active"})
     private UserAccounts updatedBy;
 
     private LocalDateTime createdAt;
@@ -51,12 +54,12 @@ public class Products {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonIgnoreProperties("products")
+    @JsonIgnoreProperties({"categoryName", "categoryDescription", "createdBy", "updatedBy", "createdAt", "updatedAt", "active"})
     private Categories categories;
 
     @ManyToOne
     @JoinColumn(name ="brands_id")
-    @JsonIgnoreProperties("products")
+    @JsonIgnoreProperties({"brandName", "brandDescription", "logoUrl", "websiteUrl", "createdAt", "updatedAt", "active"})
     private Brands brands;
 
     public Brands getBrands() {
@@ -193,5 +196,13 @@ public class Products {
 
     public void setUpdatedBy(UserAccounts updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 }

@@ -1,11 +1,14 @@
 package com.example.Sanjaghak.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
 @Entity
 public class VerificationToken {

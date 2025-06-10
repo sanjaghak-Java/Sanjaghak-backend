@@ -1,7 +1,10 @@
 package com.example.Sanjaghak.model;
 
 import com.example.Sanjaghak.Enum.User_role;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -35,55 +38,6 @@ public class UserAccounts {
     private LocalDateTime createdAt ;
 
     private LocalDateTime updatedAt;
-
-
-    @OneToMany(mappedBy = "createdBy")
-    @JsonManagedReference("createdByRef")
-    private List<Categories> categories;
-
-    @OneToMany(mappedBy = "updatedBy")
-    @JsonManagedReference("updatedByRef")
-    private List<Categories> category;
-
-    @OneToMany(mappedBy = "createdBy")
-    @JsonManagedReference("productCreatedByRef")
-    private List<Products> createdProducts;
-
-    @OneToMany(mappedBy = "updatedBy")
-    @JsonManagedReference("productUpdatedByRef")
-    private List<Products> updatedProducts;
-
-    public List<Products> getCreatedProducts() {
-        return createdProducts;
-    }
-
-    public void setCreatedProducts(List<Products> createdProducts) {
-        this.createdProducts = createdProducts;
-    }
-
-    public List<Products> getUpdatedProducts() {
-        return updatedProducts;
-    }
-
-    public void setUpdatedProducts(List<Products> updatedProducts) {
-        this.updatedProducts = updatedProducts;
-    }
-
-    public List<Categories> getCategory() {
-        return category;
-    }
-
-    public void setCategory(List<Categories> category) {
-        this.category = category;
-    }
-
-    public List<Categories> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Categories> categories) {
-        this.categories = categories;
-    }
 
     @PrePersist
     public void onCreate() {
