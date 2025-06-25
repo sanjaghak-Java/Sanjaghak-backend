@@ -31,8 +31,14 @@ public class UserAccountController {
     @PostMapping("/requestCode")
     public ResponseEntity<?> requestCode(@RequestBody UserAccounts request) {
         verificationService.sendCode(request.getEmail(), request.getPhoneNumber());
-        return ResponseEntity.ok(Map.of("message", "کد تأیید ارسال شد", "expiresIn", "5 دقیقه"));
+        return ResponseEntity.ok("کد تأیید ارسال شد");
     }
+
+//    @GetMapping("/test")
+//    public ResponseEntity<?> test() {
+//        verificationService.sendCode("amir.m.jvd.1.1@gmail.com", "09030626780");
+//        return ResponseEntity.ok("کد تأیید ارسال شد");
+//    }
 
     @PostMapping("/verifyCode")
     public ResponseEntity<?> verifyCode(@RequestBody VerificationToken request) {

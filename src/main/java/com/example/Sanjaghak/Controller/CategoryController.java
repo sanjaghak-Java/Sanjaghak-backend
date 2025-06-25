@@ -93,6 +93,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getPaginationCategory(page, size));
 
     }
+
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable UUID id,
                                             @RequestHeader("Authorization") String authHeader) {
