@@ -73,7 +73,24 @@ public class AttributeRequirementController {
 
     @GetMapping("{id}")
     public ResponseEntity<?> getAttributeRequirement(@PathVariable UUID id){
-        return ResponseEntity.ok().body(attributeRequirementService.getAttributeRequirementById(id));
+
+        try{
+            AttributeRequirement get = attributeRequirementService.getAttributeRequirementById(id);
+            return ResponseEntity.ok(get);
+        }catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", ex.getMessage()));
+
+        } catch (RuntimeException ex) {
+            String msg = ex.getMessage();
+            if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", msg));
+
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("error", msg));
+            }
+        }
     }
 
     @DeleteMapping("{id}")
@@ -99,11 +116,11 @@ public class AttributeRequirementController {
     }
     @GetMapping("/{categoryId}/required-attributes")
     public ResponseEntity<?> getRequiredAttributes(
-            @PathVariable UUID categoryId,
-            @RequestHeader("Authorization") String authHeader) {
+            @PathVariable UUID categoryId
+           ) {
         try {
-            String token = authHeader.replace("Bearer ", "");
-            List<ProductAttribute> requiredAttributes = attributeRequirementService.getRequiredAttributeRequirementByCategory(categoryId, token);
+
+            List<ProductAttribute> requiredAttributes = attributeRequirementService.getRequiredAttributeRequirementByCategory(categoryId);
             return ResponseEntity.ok(requiredAttributes);
         }catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT)

@@ -3,10 +3,14 @@ package com.example.Sanjaghak.Controller;
 import com.example.Sanjaghak.Service.ProductAttributeService;
 import com.example.Sanjaghak.model.ProductAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -61,12 +65,26 @@ public class ProductAttributeController {
 
     @GetMapping("{id}")
     public ResponseEntity<?> getProductAttributeById(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(productAttributeService.getProductAttributeById(id));
+        try{
+            return ResponseEntity.ok().body(productAttributeService.getProductAttributeById(id));
+        }
+         catch (RuntimeException ex) {
+            String msg = ex.getMessage();
+            if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", msg));
+
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("error", msg));
+            }
+        }
     }
 
     @GetMapping("/getAllAttribute")
-    public ResponseEntity<?> getAllProductAttribute() {
-        return ResponseEntity.ok().body(productAttributeService.getAllProductAttributes());
+    public Page<ProductAttribute> getAllProductAttribute(
+            @RequestParam(required = false) String attributeName,
+            Pageable pageable){
+        return productAttributeService.getAllProductAttributes(attributeName,pageable);
     }
 
     @DeleteMapping("{id}")

@@ -5,6 +5,8 @@ import com.example.Sanjaghak.model.Categories;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -73,8 +75,23 @@ public class CategoryController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Categories> getCategory(@PathVariable UUID id) {
-        return ResponseEntity.ok(categoryService.getCategoryById(id));
+    public ResponseEntity<?> getCategory(@PathVariable UUID id) {
+        try {
+            return ResponseEntity.ok(categoryService.getCategoryById(id));
+        }catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", ex.getMessage()));
+
+        } catch (RuntimeException ex) {
+            String msg = ex.getMessage();
+            if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", msg));
+
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("error", msg));
+            }
+        }
     }
 
     @GetMapping("getAllCategory")
@@ -88,10 +105,9 @@ public class CategoryController {
     }
 
     @GetMapping("/getPaginationCategory")
-    public ResponseEntity<?> getPaginationCategory(@RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(categoryService.getPaginationCategory(page, size));
-
+    public Page<Categories> getPaginationCategory(@RequestParam(required = false) String categoryName,
+                                         Pageable pageable) {
+        return categoryService.getPaginationCategory(categoryName, pageable);
     }
 
     @DeleteMapping("{id}")

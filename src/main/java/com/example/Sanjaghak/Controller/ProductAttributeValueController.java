@@ -22,22 +22,25 @@ public class ProductAttributeValueController {
     public ResponseEntity<?> createProductAttributeValue(@RequestParam UUID productId, @RequestParam UUID attributeId,
                                                          @RequestBody ProductAttributeValue productAttributeValue,
                                                          @RequestHeader("Authorization") String authHeader) {
-        try{
+        try {
+
             String token = authHeader.replace("Bearer ", "");
-            ProductAttributeValue save = productAttributeValueService.createProductAttributeValue(productId,attributeId,
-                    productAttributeValue,token);
+            ProductAttributeValue save = productAttributeValueService.createProductAttributeValue(productId, attributeId,
+                    productAttributeValue, token);
             return ResponseEntity.ok(save);
-        }catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", ex.getMessage()));
 
-        } catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex) {
             String msg = ex.getMessage();
             if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(Map.of("error", msg));
 
-            } else {
+            }
+            else {
                 return ResponseEntity.badRequest().body(Map.of("error", msg));
             }
         }

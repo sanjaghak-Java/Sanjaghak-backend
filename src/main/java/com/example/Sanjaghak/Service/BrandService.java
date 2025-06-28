@@ -2,6 +2,7 @@ package com.example.Sanjaghak.Service;
 
 import com.example.Sanjaghak.Repository.BrandsRepository;
 import com.example.Sanjaghak.Repository.ProductRepository;
+import com.example.Sanjaghak.Specification.BrandSpecification;
 import com.example.Sanjaghak.model.Brands;
 import com.example.Sanjaghak.model.Categories;
 import com.example.Sanjaghak.security.jwt.JwtUtil;
@@ -26,8 +27,6 @@ public class BrandService {
 
     @Autowired
     private ProductRepository productRepository;
-
-
 
     public Brands createBrand(Brands brand,String token) {
         String role = JwtUtil.extractUserRole(token);
@@ -76,10 +75,8 @@ public class BrandService {
         return brandsRepository.findByActiveTrue();
     }
 
-    public Page<Brands> getPaginationBrands(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return brandsRepository.findAll(pageable);
-
+    public Page<Brands> getPaginationBrands(String brandName, Pageable pageable) {
+        return brandsRepository.findAll(BrandSpecification.filterBrand(brandName), pageable);
     }
 
     public void deleteBrand(UUID brandId, String token) {
