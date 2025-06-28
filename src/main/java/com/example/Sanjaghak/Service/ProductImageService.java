@@ -140,7 +140,7 @@ public class ProductImageService {
         if (images.isEmpty()) {
             return 0;
         } else {
-            return images.get(0).getSortOrder() + 1;  // بیشترین مقدار + 1
+            return images.get(0).getSortOrder() + 1;
         }
     }
     public boolean imageExists(String imageUrl, Products product) {

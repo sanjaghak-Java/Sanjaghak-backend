@@ -29,9 +29,9 @@ public class UserAccounts {
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
-    private User_role role = User_role.customer;
+    private User_role role ;
 
-    private boolean isActive = true;
+    private boolean isActive ;
 
     private LocalDateTime  lastLogin;
 
@@ -81,7 +81,7 @@ public class UserAccounts {
         this.id = id;
     }
 
-    public boolean isActive() {
+    public boolean getActive() {
         return isActive;
     }
 

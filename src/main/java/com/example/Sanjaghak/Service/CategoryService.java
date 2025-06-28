@@ -3,6 +3,7 @@ package com.example.Sanjaghak.Service;
 import com.example.Sanjaghak.Repository.CategoryRepository;
 import com.example.Sanjaghak.Repository.ProductRepository;
 import com.example.Sanjaghak.Repository.UserAccountsRepository;
+import com.example.Sanjaghak.Specification.CategorySpecifications;
 import com.example.Sanjaghak.model.Categories;
 import com.example.Sanjaghak.model.UserAccounts;
 import com.example.Sanjaghak.security.jwt.JwtUtil;
@@ -10,13 +11,10 @@ import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
-
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -48,15 +46,11 @@ public class CategoryService {
             throw new IllegalArgumentException("دسته‌بندی از قبل وجود دارد !");
         }
 
-
-
         category.setCreatedBy(user);
         category.setCreatedAt(LocalDateTime.now());
         category.setActive(true);
         return categoryRepository.save(category);
     }
-
-
 
     public Categories updateCategory(UUID id,Categories category, String token) {
 
@@ -94,11 +88,10 @@ public class CategoryService {
         return  categoryRepository.findByActiveTrue();
     }
 
-    public Page<Categories> getPaginationCategory(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return categoryRepository.findAll(pageable);
-
+    public Page<Categories> getPaginationCategory(String categoryName, Pageable pageable) {
+        return categoryRepository.findAll(CategorySpecifications.filterCategory(categoryName),pageable);
     }
+
     public void deleteCategory(UUID categoryId, String token) {
         String role = JwtUtil.extractUserRole(token);
 

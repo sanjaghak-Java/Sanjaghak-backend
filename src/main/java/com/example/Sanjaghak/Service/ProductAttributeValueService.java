@@ -47,6 +47,10 @@ public class ProductAttributeValueService {
             throw new IllegalArgumentException("ویژگی مورد نظر یافت نشد.");
         }
 
+        if(productAttributeValueRepository.existsByProductId_productId(productId) && productAttributeValueRepository.existsByAttributeId_attributeId(attributeId)){
+            throw new IllegalArgumentException("تکراری");
+        }
+
 
         UserAccounts user = userAccountsRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("کاربر پیدا نشد"));

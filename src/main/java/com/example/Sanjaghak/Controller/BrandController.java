@@ -4,6 +4,8 @@ import com.example.Sanjaghak.Service.BrandService;
 import com.example.Sanjaghak.model.Brands;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -68,7 +70,23 @@ public class BrandController {
 
     @GetMapping("{id}")
     public ResponseEntity<?> getBrand(@PathVariable UUID id) {
+        try {
         return ResponseEntity.ok(brandService.getBrandById(id));
+
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+        } catch (RuntimeException ex) {
+            String msg = ex.getMessage();
+            if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", msg));
+            } else {
+                return ResponseEntity.badRequest()
+                    .body(Map.of("error", msg));
+            }
+
+        }
     }
 
     @GetMapping("/getAllBrands")
@@ -82,10 +100,9 @@ public class BrandController {
     }
 
     @GetMapping("/getPaginationBrands")
-    public ResponseEntity<?> getPaginationBrands(@RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(brandService.getPaginationBrands(page, size));
-
+    public Page<Brands> getPaginationBrands(@RequestParam(required = false) String brandName,
+                                            Pageable pageable) {
+        return brandService.getPaginationBrands(brandName, pageable);
     }
 
 

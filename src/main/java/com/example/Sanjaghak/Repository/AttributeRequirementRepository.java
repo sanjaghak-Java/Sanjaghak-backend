@@ -10,5 +10,6 @@ import java.util.UUID;
 @Repository
 public interface AttributeRequirementRepository extends JpaRepository<AttributeRequirement, UUID> {
     List<AttributeRequirement> findByCategoryId_CategoryIdAndIsRequiredTrue(UUID categoryId);
+    boolean existsByAttributeId_attributeId(UUID attributeId);
 
 }

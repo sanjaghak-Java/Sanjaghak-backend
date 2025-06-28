@@ -102,7 +102,8 @@ public class AttributeRequirementService {
     }
 
     public AttributeRequirement getAttributeRequirementById(UUID AttRequirementId) {
-        return attributeRequirementRepository.findById(AttRequirementId).orElseThrow(()-> new EntityNotFoundException("واجب بودن ارزش ویژگی مورد نظر پیدا نشد !"));
+        return attributeRequirementRepository.findById(AttRequirementId).
+                orElseThrow(()-> new EntityNotFoundException("واجب بودن ارزش ویژگی مورد نظر پیدا نشد !"));
     }
 
     public List<AttributeRequirement> getAllAttributeRequirements() {
@@ -122,14 +123,7 @@ public class AttributeRequirementService {
         attributeRequirementRepository.delete(delete);
     }
 
-    public List<ProductAttribute> getRequiredAttributeRequirementByCategory(UUID categoryId, String token) {
-
-        UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
-        String role = JwtUtil.extractUserRole(token);
-
-        if (!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("manager")) {
-            throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
-        }
+    public List<ProductAttribute> getRequiredAttributeRequirementByCategory(UUID categoryId) {
 
         if (!categoryRepository.existsByCategoryId(categoryId)) {
             throw new IllegalArgumentException("دسته‌بندی مورد نظر یافت نشد");

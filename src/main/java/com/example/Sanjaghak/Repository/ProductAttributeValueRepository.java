@@ -10,4 +10,8 @@ import java.util.UUID;
 @Repository
 public interface ProductAttributeValueRepository extends JpaRepository<ProductAttributeValue, UUID> {
     List<ProductAttributeValue> findByProductId_productId(UUID productId);
+
+    boolean existsByProductId_productId(UUID productId);
+    boolean existsByAttributeId_attributeId(UUID attributeId);
+
 }

@@ -33,24 +33,6 @@ public class VerificationService {
         this.userRepo = userRepo;
     }
 
-//    public String sendCode(String email, String phoneNumber) {
-//        String code = generateCode();
-//
-//        VerificationToken token = new VerificationToken();
-//        token.setEmail(email);
-//        token.setPhoneNumber(phoneNumber);
-//        token.setCode(code);
-//        token.setExpiresAt(LocalDateTime.now().plusMinutes(5));
-//        token.setVerified(false);
-//
-//        tokenRepo.save(token);
-//
-//        emailService.sendVerificationEmail(email, code);
-//        smsService.sendVerificationCode(phoneNumber, code);
-//
-//        return code;
-//    }
-
     public String sendCode(String email, String phoneNumber) {
 
         String code = generateCode();
@@ -101,25 +83,6 @@ public class VerificationService {
         return code;
     }
 
-//    public boolean verifyCode(String email, String phoneNumber, String code) {
-//        return tokenRepo.findByEmailAndPhoneNumberAndCode(email, phoneNumber, code)
-//                .filter(t -> !t.isVerified() && t.getExpiresAt().isAfter(LocalDateTime.now()))
-//                .map(token -> {
-//                    token.setVerified(true);
-//                    tokenRepo.save(token);
-//
-//                    // ✅ پیدا کردن کاربر موجود و فعال‌سازی اون
-//                    Optional<UserAccounts> userOpt = userRepo.findByEmailAndPhoneNumber(email, phoneNumber);
-//                    if (userOpt.isPresent()) {
-//                        UserAccounts user = userOpt.get();
-//                        user.setActive(true);
-//                        user.setUpdatedAt(LocalDateTime.now());
-//                        userRepo.save(user);
-//                    }
-//                    return true;
-//                }).orElse(false);
-//    }
-
     public boolean verifyCode(String email, String phoneNumber, String code) {
         return tokenRepo.findByEmailAndPhoneNumberAndCode(email, phoneNumber, code)
                 .filter(t -> !t.isVerified() && t.getExpiresAt().isAfter(LocalDateTime.now()))
@@ -127,7 +90,6 @@ public class VerificationService {
                     token.setVerified(true);
                     tokenRepo.save(token);
 
-                    // فعال‌سازی کاربر در صورت وجود
                     userRepo.findByEmailAndPhoneNumber(email, phoneNumber).ifPresent(user -> {
                         user.setActive(true);
                         user.setUpdatedAt(LocalDateTime.now());
@@ -170,7 +132,6 @@ public class VerificationService {
                     token.setVerified(true);
                     tokenRepo.save(token);
 
-                    // ✅ پیدا کردن کاربر موجود و فعال‌سازی اون
                     Optional<UserAccounts> userOpt = userRepo.findByPhoneNumber(phone);
                     if (userOpt.isPresent()) {
                         UserAccounts user = userOpt.get();

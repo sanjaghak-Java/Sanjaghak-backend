@@ -68,7 +68,22 @@ public class ProductController {
 
     @GetMapping("{id}")
     public ResponseEntity<?> getProductById(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(productService.getProductById(id));
+        try{
+            return ResponseEntity.ok().body(productService.getProductById(id));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", ex.getMessage()));
+
+        } catch (RuntimeException ex) {
+            String msg = ex.getMessage();
+            if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", msg));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("error", msg));
+            }
+        }
+
     }
 
     @GetMapping("/getAllProduct")
@@ -80,7 +95,6 @@ public class ProductController {
     public ResponseEntity<?> getActiveProducts() {
         return ResponseEntity.ok().body(productService.getActiveProducts());
     }
-
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteProductAttributeRequiremenr(@PathVariable UUID id, @RequestHeader("Authorization") String authHeader) {
@@ -129,7 +143,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/getProductsByfilter")
     public Page<Products> getProductsByfilter(
             @RequestParam(required = false) String productName,
             @RequestParam(required = false) BigDecimal minPrice,
@@ -146,7 +160,7 @@ public class ProductController {
                 categoryId,
                 brandId,
                 pageable
-        );
+        ) ;
     }
 }
 
