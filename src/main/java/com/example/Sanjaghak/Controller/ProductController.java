@@ -83,7 +83,6 @@ public class ProductController {
                 return ResponseEntity.badRequest().body(Map.of("error", msg));
             }
         }
-
     }
 
     @GetMapping("/getAllProduct")
