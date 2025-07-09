@@ -2,9 +2,11 @@ package com.example.Sanjaghak.Controller;
 
 import com.example.Sanjaghak.Enum.User_role;
 import com.example.Sanjaghak.Repository.UserAccountsRepository;
+import com.example.Sanjaghak.Service.CustomerService;
 import com.example.Sanjaghak.Service.UserAccountsService;
 import com.example.Sanjaghak.Service.VerificationService;
 import com.example.Sanjaghak.model.Categories;
+import com.example.Sanjaghak.model.Customer;
 import com.example.Sanjaghak.model.UserAccounts;
 import com.example.Sanjaghak.model.VerificationToken;
 import com.example.Sanjaghak.security.jwt.JwtUtil;
@@ -30,7 +32,7 @@ public class UserAccountController {
     private UserAccountsService userAccountsService;
 
     @Autowired
-    private UserAccountsRepository userAccountsRepository;
+    private CustomerService customerService;
 
     public UserAccountController(UserAccountsService userAccountsService, VerificationService verificationService) {
         this.userAccountsService = userAccountsService;
@@ -38,6 +40,7 @@ public class UserAccountController {
     }
 
 
+    @CrossOrigin(origins = "http://127.0.0.1:5173")
     @PostMapping("/requestCode")
     public ResponseEntity<?> requestCode(@RequestBody UserAccounts request) {
         verificationService.sendCode(request.getEmail(), request.getPhoneNumber());
@@ -70,6 +73,7 @@ public class UserAccountController {
         try {
             request.setRole(User_role.customer);
             UserAccounts userAccounts = userAccountsService.register(request);
+            customerService.saveCustomer(userAccounts.getId());
             String jwtToken = JwtUtil.generateToken(userAccounts);
             return ResponseEntity.ok(Map.of(
                     "message", "ورود موفقیت‌آمیز بود",

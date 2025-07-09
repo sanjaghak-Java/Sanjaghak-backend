@@ -40,13 +40,13 @@ public class UserAccounts {
     private LocalDateTime updatedAt;
 
     @PrePersist
-    public void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        this.createdAt = LocalDateTime.now();
+    public void ensureOrderStatus() {
+        if(createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if(updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
     }
 
     public LocalDateTime getCreatedAt() {
