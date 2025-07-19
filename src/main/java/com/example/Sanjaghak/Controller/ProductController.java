@@ -1,6 +1,7 @@
 package com.example.Sanjaghak.Controller;
 
 import com.example.Sanjaghak.Service.ProductService;
+import com.example.Sanjaghak.model.Brands;
 import com.example.Sanjaghak.model.Products;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -160,6 +162,12 @@ public class ProductController {
                 brandId,
                 pageable
         ) ;
+    }
+
+    @GetMapping("/brands-by-category/{categoryId}")
+    public ResponseEntity<?> getBrandsByCategory(@PathVariable UUID categoryId) {
+        List<Brands> brands = productService.getBrandsByCategory(categoryId);
+        return ResponseEntity.ok(brands);
     }
 }
 

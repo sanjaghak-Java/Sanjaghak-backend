@@ -215,4 +215,8 @@ public class ProductService {
                 pageable
         );
     }
+
+    public List<Brands> getBrandsByCategory(UUID categoryId) {
+        return productRepository.findDistinctBrandsByCategoryId(categoryId);
+    }
 }
