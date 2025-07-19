@@ -43,6 +43,11 @@ public class CategoryImageService {
         Categories category = categoryRepository.findById(CategoryId)
                 .orElseThrow(() -> new RuntimeException("دسته بندی مورد نظر یافت نشد"));
 
+        boolean imageAlreadyExistsForCategory = categoryImageRepository.existsByCategories(category);
+        if (imageAlreadyExistsForCategory) {
+            throw new RuntimeException("برای این دسته‌بندی قبلاً یک تصویر آپلود شده است.");
+        }
+
         String originalFilename = file.getOriginalFilename();
         String imageUrl = "/uploads/" + originalFilename;
 
@@ -76,30 +81,52 @@ public class CategoryImageService {
         return categoryImageRepository.existsByImageUrlAndCategories(imageUrl, category);
     }
 
-    public CategoryImage update(UUID imageId,UUID categoryId, ProductImage updatedImage, String token) {
+    public CategoryImage update(UUID imageId, UUID categoryId, MultipartFile newFile, String altText, String token) throws IOException {
         UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
         String role = JwtUtil.extractUserRole(token);
+
         if (!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("manager")) {
             throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
         }
 
         if (!categoryRepository.existsById(categoryId)) {
-            throw new IllegalArgumentException("دسته بندی  مورد نظر یافت نشد.");
+            throw new IllegalArgumentException("دسته‌بندی مورد نظر یافت نشد.");
         }
 
         CategoryImage existing = categoryImageRepository.findById(imageId)
-                .orElseThrow(() -> new RuntimeException("تصویر مورئ نظر یافت نشد!"));
+                .orElseThrow(() -> new RuntimeException("تصویر مورد نظر یافت نشد!"));
+
+        Categories category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("دسته‌بندی پیدا نشد!"));
 
         UserAccounts user = userAccountsRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("کاربر پیدا نشد"));
 
-        Categories categories = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException("محصول مورد نظر پیدا نشد !"));
+        try {
+            String oldFileName = Paths.get(existing.getImageUrl()).getFileName().toString();
+            Path oldFilePath = Paths.get("D:/springbootproject/Sanjaghak/Sanjaghak-backend/media").resolve(oldFileName);
+            Files.deleteIfExists(oldFilePath);
+        } catch (IOException e) {
+            throw new RuntimeException("خطا در حذف فایل قبلی: " + e.getMessage());
+        }
 
+        String newFileName = newFile.getOriginalFilename();
+        String newImageUrl = "/uploads/" + newFileName;
 
-        existing.setAltText(updatedImage.getAltText());
-        existing.setImageUrl(updatedImage.getImageUrl());
-        existing.setCategories(categories);
+        Path uploadPath = Paths.get("D:/springbootproject/Sanjaghak/Sanjaghak-backend/media");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path newFilePath = uploadPath.resolve(newFileName);
+        newFile.transferTo(newFilePath.toFile());
+
+        existing.setImageUrl(newImageUrl);
+        existing.setAltText(altText);
+        existing.setCategories(category);
+        existing.setCreatedBy(user);
+        existing.setCreatedAt(LocalDateTime.now());
+
         return categoryImageRepository.save(existing);
     }
 

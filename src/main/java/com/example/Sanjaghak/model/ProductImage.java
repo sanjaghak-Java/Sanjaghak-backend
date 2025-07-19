@@ -23,7 +23,8 @@ public class ProductImage {
 
     private Integer sortOrder;
 
-    private boolean isPrimary;
+    @Column(name = "is_primary")
+    private boolean primary;
 
     @ManyToOne
     @JoinColumn(name = "created_by")
@@ -72,12 +73,12 @@ public class ProductImage {
         this.imageUrl = imageUrl;
     }
 
-    public boolean isPrimary() {
-        return isPrimary;
+    public boolean getPrimary() {
+        return primary;
     }
 
     public void setPrimary(boolean primary) {
-        isPrimary = primary;
+        this.primary = primary;
     }
 
     public Products getProductId() {

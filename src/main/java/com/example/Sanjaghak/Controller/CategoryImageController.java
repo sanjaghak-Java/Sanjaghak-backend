@@ -47,28 +47,32 @@ public class CategoryImageController {
     public ResponseEntity<?> updateImage(
             @PathVariable UUID imageId,
             @RequestParam UUID categoryId,
-            @RequestBody ProductImage updatedImage,
+            @RequestParam("file") MultipartFile newFile,
+            @RequestParam(value = "altText", required = false) String altText,
             @RequestHeader("Authorization") String authHeader
     ) {
         try {
             String token = authHeader.replace("Bearer ", "");
-            CategoryImage result = categoryImageService.update(imageId,categoryId, updatedImage,token);
+            CategoryImage result = categoryImageService.update(imageId, categoryId, newFile, altText, token);
             return ResponseEntity.ok(result);
-        }catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", ex.getMessage()));
-
         } catch (RuntimeException ex) {
             String msg = ex.getMessage();
             if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(Map.of("error", msg));
-
             } else {
                 return ResponseEntity.badRequest().body(Map.of("error", msg));
             }
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "خطا در آپلود فایل جدید: " + e.getMessage()));
         }
     }
+
+
     @GetMapping("/getAllImage")
     public ResponseEntity<List<CategoryImage>> getAllImages() {
         return ResponseEntity.ok(categoryImageService.findAll());

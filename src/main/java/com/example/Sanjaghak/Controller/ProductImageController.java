@@ -37,11 +37,12 @@ public class ProductImageController {
     public ResponseEntity<?> uploadImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("productId") UUID productId,
-            @RequestParam(value = "altText", required = false) String altText ,
+            @RequestParam(value = "altText", required = false) String altText,
+            @RequestParam(value = "required", required = false) boolean required,
             @RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.replace("Bearer ", "");
-            ProductImage save =  productImageService.handleImageUpload(file, productId, altText,token);
+            ProductImage save = productImageService.handleImageUpload(file, productId, altText, required, token);
             return ResponseEntity.ok(save);
         } catch (RuntimeException e) {
             String msg = e.getMessage();
@@ -55,6 +56,7 @@ public class ProductImageController {
                     .body("خطا در آپلود: " + e.getMessage());
         }
     }
+
 
 
     @PutMapping("/{imageId}")

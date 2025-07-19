@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface CategoryImageRepository extends JpaRepository<CategoryImage, UUID> {
     boolean existsByImageUrlAndCategories(String imageUrl, Categories categories);
     List<CategoryImage> findByCategories(Categories categories);
+    boolean existsByCategories(Categories categories);
 }
