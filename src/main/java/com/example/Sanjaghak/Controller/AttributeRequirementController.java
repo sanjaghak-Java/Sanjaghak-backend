@@ -114,28 +114,23 @@ public class AttributeRequirementController {
             }
         }
     }
-    @GetMapping("/{categoryId}/required-attributes")
-    public ResponseEntity<?> getRequiredAttributes(
-            @PathVariable UUID categoryId
-           ) {
-        try {
 
-            List<ProductAttribute> requiredAttributes = attributeRequirementService.getRequiredAttributeRequirementByCategory(categoryId);
+    @GetMapping("/{categoryId}/required-attributes")
+    public ResponseEntity<?> getRequiredAttributes(@PathVariable UUID categoryId) {
+        try {
+            List<Map<String, Object>> requiredAttributes = attributeRequirementService.getRequiredAttributeRequirementByCategory(categoryId);
             return ResponseEntity.ok(requiredAttributes);
-        }catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", ex.getMessage()));
-
         } catch (RuntimeException ex) {
             String msg = ex.getMessage();
             if ("شما مجوز لازم برای انجام این عملیات را ندارید".equals(msg)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(Map.of("error", msg));
-
             } else {
                 return ResponseEntity.badRequest().body(Map.of("error", msg));
             }
         }
     }
-
 }

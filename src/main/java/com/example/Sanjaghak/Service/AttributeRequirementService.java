@@ -10,9 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -123,8 +121,7 @@ public class AttributeRequirementService {
         attributeRequirementRepository.delete(delete);
     }
 
-    public List<ProductAttribute> getRequiredAttributeRequirementByCategory(UUID categoryId) {
-
+    public List<Map<String, Object>> getRequiredAttributeRequirementByCategory(UUID categoryId) {
         if (!categoryRepository.existsByCategoryId(categoryId)) {
             throw new IllegalArgumentException("دسته‌بندی مورد نظر یافت نشد");
         }
@@ -136,15 +133,18 @@ public class AttributeRequirementService {
             throw new IllegalArgumentException("هیچ ویژگی ضروری‌ای برای این دسته‌بندی تعریف نشده است.");
         }
 
-        List<ProductAttribute> attributeList = requiredAttributes.stream()
-                .map(AttributeRequirement::getAttributeId)
-                .collect(Collectors.toList());
+        List<Map<String, Object>> result = requiredAttributes.stream().map(req -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("requirementId", req.getId());
+            map.put("attribute", req.getAttributeId());
+            return map;
+        }).collect(Collectors.toList());
 
+        Collections.reverse(result);
 
-        Collections.reverse(attributeList);
-
-        return attributeList;
+        return result;
     }
+
 
 
 
