@@ -3,6 +3,7 @@ package com.example.Sanjaghak.Controller;
 import com.example.Sanjaghak.Service.AttributeRequirementService;
 import com.example.Sanjaghak.model.AttributeRequirement;
 import com.example.Sanjaghak.model.ProductAttribute;
+import com.example.Sanjaghak.model.ProductAttributeValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -134,9 +135,15 @@ public class AttributeRequirementController {
         }
     }
 
+//    @GetMapping("/unused/{productId}")
+//    public ResponseEntity<List<ProductAttribute>> getUnusedAttributes(@PathVariable UUID productId) {
+//        List<ProductAttribute> unusedAttributes = attributeRequirementService.getUnusedAttributesByProduct(productId);
+//        return ResponseEntity.ok(unusedAttributes);
+//    }
+
     @GetMapping("/unused/{productId}")
-    public ResponseEntity<List<ProductAttribute>> getUnusedAttributes(@PathVariable UUID productId) {
-        List<ProductAttribute> unusedAttributes = attributeRequirementService.getUnusedAttributesByProduct(productId);
-        return ResponseEntity.ok(unusedAttributes);
+    public ResponseEntity<List<ProductAttributeValue>> getUnusedAttributeValues(@PathVariable UUID productId) {
+        List<ProductAttributeValue> result = attributeRequirementService.getUnusedProductAttributeValues(productId);
+        return ResponseEntity.ok(result);
     }
 }

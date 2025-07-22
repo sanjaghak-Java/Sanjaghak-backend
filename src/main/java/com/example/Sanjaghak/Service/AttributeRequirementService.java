@@ -155,6 +155,19 @@ public class AttributeRequirementService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductAttributeValue> getUnusedProductAttributeValues(UUID productId) {
+        List<ProductAttributeValue> attributeValues = productAttributeValueRepository.findByProductId_productId(productId);
+
+        return attributeValues.stream()
+                .filter(pav -> {
+                    ProductAttribute attribute = pav.getAttributeId();
+                    return !attributeRequirementRepository.existsByAttributeId_attributeId(attribute.getAttributeId());
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
 
 
 
