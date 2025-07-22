@@ -145,16 +145,6 @@ public class AttributeRequirementService {
         return result;
     }
 
-    public List<ProductAttribute> getUnusedAttributesByProduct(UUID productId) {
-        List<ProductAttributeValue> attributeValues = productAttributeValueRepository.findByProductId_productId(productId);
-
-        return attributeValues.stream()
-                .map(ProductAttributeValue::getAttributeId)
-                .distinct()
-                .filter(attr -> !attributeRequirementRepository.existsByAttributeId_attributeId(attr.getAttributeId()))
-                .collect(Collectors.toList());
-    }
-
     public List<ProductAttributeValue> getUnusedProductAttributeValues(UUID productId) {
         List<ProductAttributeValue> attributeValues = productAttributeValueRepository.findByProductId_productId(productId);
 
@@ -165,10 +155,4 @@ public class AttributeRequirementService {
                 })
                 .collect(Collectors.toList());
     }
-
-
-
-
-
-
 }
