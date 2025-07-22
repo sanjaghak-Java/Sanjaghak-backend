@@ -1,9 +1,6 @@
 package com.example.Sanjaghak.Service;
 
-import com.example.Sanjaghak.Repository.AttributeRequirementRepository;
-import com.example.Sanjaghak.Repository.CategoryRepository;
-import com.example.Sanjaghak.Repository.ProductAttributeRepository;
-import com.example.Sanjaghak.Repository.UserAccountsRepository;
+import com.example.Sanjaghak.Repository.*;
 import com.example.Sanjaghak.model.*;
 import com.example.Sanjaghak.security.jwt.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +23,9 @@ public class AttributeRequirementService {
 
     @Autowired
     private UserAccountsRepository userAccountsRepository;
+
+    @Autowired
+    private ProductAttributeValueRepository productAttributeValueRepository;
 
     public AttributeRequirement createAttributeRequirement(AttributeRequirement attributeRequirement,
                                                            UUID categoryId,
@@ -143,6 +143,16 @@ public class AttributeRequirementService {
         Collections.reverse(result);
 
         return result;
+    }
+
+    public List<ProductAttribute> getUnusedAttributesByProduct(UUID productId) {
+        List<ProductAttributeValue> attributeValues = productAttributeValueRepository.findByProductId_productId(productId);
+
+        return attributeValues.stream()
+                .map(ProductAttributeValue::getAttributeId)
+                .distinct()
+                .filter(attr -> !attributeRequirementRepository.existsByAttributeId_attributeId(attr.getAttributeId()))
+                .collect(Collectors.toList());
     }
 
 

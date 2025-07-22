@@ -133,4 +133,10 @@ public class AttributeRequirementController {
             }
         }
     }
+
+    @GetMapping("/unused/{productId}")
+    public ResponseEntity<List<ProductAttribute>> getUnusedAttributes(@PathVariable UUID productId) {
+        List<ProductAttribute> unusedAttributes = attributeRequirementService.getUnusedAttributesByProduct(productId);
+        return ResponseEntity.ok(unusedAttributes);
+    }
 }
