@@ -47,7 +47,7 @@ public class ProductAttributeValueService {
             throw new IllegalArgumentException("ویژگی مورد نظر یافت نشد.");
         }
 
-        if(productAttributeValueRepository.existsByProductId_productId(productId) && productAttributeValueRepository.existsByAttributeId_attributeId(attributeId)){
+        if (productAttributeValueRepository.existsByProductId_productIdAndAttributeId_attributeId(productId, attributeId)) {
             throw new IllegalArgumentException("تکراری");
         }
 

@@ -13,5 +13,5 @@ public interface ProductAttributeValueRepository extends JpaRepository<ProductAt
 
     boolean existsByProductId_productId(UUID productId);
     boolean existsByAttributeId_attributeId(UUID attributeId);
-
+    boolean existsByProductId_productIdAndAttributeId_attributeId(UUID productId, UUID attributeId);
 }

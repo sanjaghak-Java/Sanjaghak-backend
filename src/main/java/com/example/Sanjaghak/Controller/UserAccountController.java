@@ -40,7 +40,6 @@ public class UserAccountController {
     }
 
 
-    @CrossOrigin(origins = "http://127.0.0.1:5173")
     @PostMapping("/requestCode")
     public ResponseEntity<?> requestCode(@RequestBody UserAccounts request) {
         verificationService.sendCode(request.getEmail(), request.getPhoneNumber());
@@ -89,7 +88,6 @@ public class UserAccountController {
 
 
 
-    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/login/requestCode")
     public ResponseEntity<?> requestLoginCode(@RequestBody Map<String, String> request) {
         try {
