@@ -19,14 +19,14 @@ public class Products {
 
     private String productDescription;
 
-    @Column(unique = true)
-    private String sku;
+//    @Column(unique = true)
+//    private String sku;
 
     private String model;
 
-    private BigDecimal price;
-
-    private BigDecimal costPrice;
+//    private BigDecimal price;
+//
+//    private BigDecimal costPrice;
 
     private boolean active;
 
@@ -86,13 +86,13 @@ public class Products {
         this.categories = categories;
     }
 
-    public BigDecimal getCostPrice() {
-        return costPrice;
-    }
-
-    public void setCostPrice(BigDecimal costPrice) {
-        this.costPrice = costPrice;
-    }
+//    public BigDecimal getCostPrice() {
+//        return costPrice;
+//    }
+//
+//    public void setCostPrice(BigDecimal costPrice) {
+//        this.costPrice = costPrice;
+//    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -118,13 +118,13 @@ public class Products {
         this.length = length;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+//    public BigDecimal getPrice() {
+//        return price;
+//    }
+//
+//    public void setPrice(BigDecimal price) {
+//        this.price = price;
+//    }
 
     public String getProductDescription() {
         return productDescription;
@@ -150,13 +150,13 @@ public class Products {
         this.productName = productName;
     }
 
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
+//    public String getSku() {
+//        return sku;
+//    }
+//
+//    public void setSku(String sku) {
+//        this.sku = sku;
+//    }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;

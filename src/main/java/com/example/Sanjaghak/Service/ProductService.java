@@ -111,10 +111,10 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("برند مورد نظر یافت نشد !"));
 
         existing.setProductName(updatedProduct.getProductName());
-        existing.setSku(updatedProduct.getSku());
+//        existing.setSku(updatedProduct.getSku());
         existing.setProductDescription(updatedProduct.getProductDescription());
-        existing.setPrice(updatedProduct.getPrice());
-        existing.setCostPrice(updatedProduct.getCostPrice());
+//        existing.setPrice(updatedProduct.getPrice());
+//        existing.setCostPrice(updatedProduct.getCostPrice());
         existing.setWeight(updatedProduct.getWeight());
         existing.setLength(updatedProduct.getLength());
         existing.setWidth(updatedProduct.getWidth());

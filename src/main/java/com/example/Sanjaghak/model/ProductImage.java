@@ -13,8 +13,8 @@ public class ProductImage {
     private UUID imageId;
 
     @ManyToOne
-    @JoinColumn(name="product_id")
-    @JsonIgnoreProperties({"productName", "productDescription","categories","brands", "sku", "price", "costPrice", "weight", "createdAt", "updatedAt", "active","length","width","height", "createdBy", "updatedBy"})
+    @JoinColumn(name = "product_id", nullable = false)
+    @JsonIgnoreProperties({"productName","productDescription","model","active","weight","length","width","height","createdBy","updatedBy","categories","brands","createdAt", "updatedAt"})
     private Products productId;
 
     private String imageUrl;

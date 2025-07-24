@@ -19,7 +19,7 @@ public class ProductAttributeValue {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    @JsonIgnoreProperties({"productName", "model","productDescription","categories","brands", "sku", "price", "costPrice", "weight", "createdAt", "updatedAt", "active","length","width","height", "createdBy", "updatedBy"})
+    @JsonIgnoreProperties({"productName", "model","productDescription","categories","brands", "weight", "createdAt", "updatedAt", "active","length","width","height", "createdBy", "updatedBy"})
     private Products productId;
 
     @ManyToOne

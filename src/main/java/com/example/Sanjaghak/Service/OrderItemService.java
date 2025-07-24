@@ -3,6 +3,7 @@ package com.example.Sanjaghak.Service;
 import com.example.Sanjaghak.Repository.OrderItemRepository;
 import com.example.Sanjaghak.Repository.OrdersRepository;
 import com.example.Sanjaghak.Repository.ProductRepository;
+import com.example.Sanjaghak.Repository.ProductVariantsRepository;
 import com.example.Sanjaghak.Specification.OrderItemSpecifications;
 import com.example.Sanjaghak.Specification.OrderSpecifications;
 import com.example.Sanjaghak.model.*;
@@ -30,7 +31,10 @@ public class OrderItemService {
     @Autowired
     private ProductRepository productRepository;
 
-    public OrderItem addOrderItem(OrderItem orderItem, UUID orderId, UUID productId, String token) {
+    @Autowired
+    private ProductVariantsRepository productVariantsRepository;
+
+    public OrderItem addOrderItem(OrderItem orderItem, UUID orderId, UUID variantId, String token) {
 
         UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
         String role = JwtUtil.extractUserRole(token);
@@ -39,14 +43,14 @@ public class OrderItemService {
             throw new IllegalArgumentException("سفارش مورد نظر یافت نشد");
         }
 
-        if(!productRepository.existsById(productId)) {
+        if(!productVariantsRepository.existsById(variantId)) {
             throw new IllegalArgumentException("کالای مورد نظر یافت نشد");
         }
 
         Orders orders = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("سفارش پیدا نشد"));
 
-        Products products = productRepository.findById(productId)
+        ProductVariants products = productVariantsRepository.findById(variantId)
                 .orElseThrow(() -> new RuntimeException("محصول پیدا نشد"));
 
         if(orderItem.getQuantity() == 0){
@@ -66,13 +70,13 @@ public class OrderItemService {
         }
 
         orderItem.setOrderId(orders);
-        orderItem.setProductId(products);
+        orderItem.setVariantId(products);
         orderItem.setCreatedAt(LocalDateTime.now());
 
         return orderItemRepository.save(orderItem);
     }
 
-    public OrderItem updateOrderItem(UUID orderItemId,OrderItem updatedOrderItem, UUID orderId,UUID productId, String token) {
+    public OrderItem updateOrderItem(UUID orderItemId,OrderItem updatedOrderItem, UUID orderId,UUID variantId, String token) {
 
         UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
         String role = JwtUtil.extractUserRole(token);
@@ -85,9 +89,10 @@ public class OrderItemService {
             throw new IllegalArgumentException("سفارش مورد نظر یافت نشد");
         }
 
-        if(!productRepository.existsById(productId)) {
+        if(!productVariantsRepository.existsById(variantId)) {
             throw new IllegalArgumentException("کالای مورد نظر یافت نشد");
         }
+
         if(!orderItemRepository.existsById(orderItemId)) {
             throw new IllegalArgumentException("ایتم خرید مورد نظر یافت نشد");
         }
@@ -95,7 +100,7 @@ public class OrderItemService {
         Orders orders = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("سفارش پیدا نشد"));
 
-        Products products = productRepository.findById(productId)
+        ProductVariants products = productVariantsRepository.findById(variantId)
                 .orElseThrow(() -> new RuntimeException("محصول پیدا نشد"));
 
         OrderItem update = orderItemRepository.findById(orderItemId)
@@ -119,7 +124,7 @@ public class OrderItemService {
 
 
         update.setOrderId(orders);
-        update.setProductId(products);
+        update.setVariantId(products);
         update.setQuantity(updatedOrderItem.getQuantity());
         update.setUnitPrice(updatedOrderItem.getUnitPrice());
         update.setTotalAmount(updatedOrderItem.getTotalAmount());

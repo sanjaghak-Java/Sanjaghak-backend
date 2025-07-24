@@ -28,13 +28,13 @@ public class Orders {
     @Column(nullable = false)
     private OrderStatus orderStatus;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentStatus paymentStatus;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentMethod paymentMethod;
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private PaymentStatus paymentStatus;
+//
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private PaymentMethod paymentMethod;
 
     @ManyToOne
     @JoinColumn(name = "billing_Address_Id", nullable = false)
@@ -56,7 +56,6 @@ public class Orders {
     @Column(nullable = false)
     private BigDecimal totalAmount;     // مبلغ نهایی بعد از همه موارد بالا
 
-
     private String notes;
 
     private LocalDateTime createdAt;
@@ -68,12 +67,12 @@ public class Orders {
         if (orderStatus == null) {
             orderStatus = OrderStatus.pending;
         }
-        if (paymentStatus == null) {
-            paymentStatus = PaymentStatus.pending;
-        }
-        if (paymentMethod == null) {
-            paymentMethod = PaymentMethod.bankTransfer;
-        }
+//        if (paymentStatus == null) {
+//            paymentStatus = PaymentStatus.pending;
+//        }
+//        if (paymentMethod == null) {
+//            paymentMethod = PaymentMethod.bankTransfer;
+//        }
         if (shippingCost == null) {
             shippingCost = BigDecimal.ZERO;
         }
@@ -195,19 +194,19 @@ public class Orders {
         this.updatedAt = updatedAt;
     }
 
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    public PaymentStatus getPaymentStatus() {
-        return paymentStatus;
-    }
-
-    public void setPaymentStatus(PaymentStatus paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
+//    public PaymentMethod getPaymentMethod() {
+//        return paymentMethod;
+//    }
+//
+//    public void setPaymentMethod(PaymentMethod paymentMethod) {
+//        this.paymentMethod = paymentMethod;
+//    }
+//
+//    public PaymentStatus getPaymentStatus() {
+//        return paymentStatus;
+//    }
+//
+//    public void setPaymentStatus(PaymentStatus paymentStatus) {
+//        this.paymentStatus = paymentStatus;
+//    }
 }

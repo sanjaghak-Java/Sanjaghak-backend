@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Entity
 public class OrderItem {
+
     @Id
     @GeneratedValue
     private UUID orderItemId;
@@ -19,9 +20,9 @@ public class OrderItem {
     private Orders orderId;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    @JsonIgnoreProperties({"productName","productDescription","sku","model","price","costPrice","active","weight","length","width","height","createdBy","updatedBy","categories","brands","createdAt", "updatedAt"})
-    private Products productId;
+    @JoinColumn(name = "variant_id", nullable = false)
+    @JsonIgnoreProperties({"sku","price","costPrice","color","hexadecimal","productId","createdAt", "updatedAt"})
+    private ProductVariants variantId;
 
     private int quantity;
 
@@ -82,14 +83,6 @@ public class OrderItem {
         this.orderItemId = orderItemId;
     }
 
-    public Products getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Products productId) {
-        this.productId = productId;
-    }
-
     public int getQuantity() {
         return quantity;
     }
@@ -128,5 +121,13 @@ public class OrderItem {
 
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
+    }
+
+    public ProductVariants getVariantId() {
+        return variantId;
+    }
+
+    public void setVariantId(ProductVariants variantId) {
+        this.variantId = variantId;
     }
 }
