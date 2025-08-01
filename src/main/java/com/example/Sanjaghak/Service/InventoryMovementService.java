@@ -100,6 +100,7 @@ public class InventoryMovementService {
         InventoryMovement movement = new InventoryMovement();
         movement.setVariantsId(productVariants);
         movement.setToShelvesId(shelves);
+        movement.setToWarehouseId(purchaseOrders.getWarehouseId());
         movement.setRefrenceId(purchaseOrderItems.getPurchaseOrderItemsId());
         movement.setQuantity(inventoryMovement.getQuantity());
         movement.setMovementType(MovementType.PURCHASE_IN);
@@ -143,6 +144,7 @@ public class InventoryMovementService {
 
         inventoryMovement.setVariantsId(productVariants);
         inventoryMovement.setToShelvesId(shelves);
+        inventoryMovement.setToWarehouseId(shelves.getSectionsId().getWarehouseId());
         inventoryMovement.setRefrenceId(user.getId());
         inventoryMovement.setMovementType(MovementType.ADJUSTMENT_IN);
         inventoryMovement.setCreatedAt(LocalDateTime.now());
@@ -185,6 +187,7 @@ public class InventoryMovementService {
 
         inventoryMovement.setVariantsId(productVariants);
         inventoryMovement.setToShelvesId(shelves);
+        inventoryMovement.setToWarehouseId(shelves.getSectionsId().getWarehouseId());
         inventoryMovement.setRefrenceId(user.getId());
         inventoryMovement.setMovementType(MovementType.ADJUSTMENT_OUT);
         inventoryMovement.setCreatedAt(LocalDateTime.now());
@@ -255,7 +258,9 @@ public class InventoryMovementService {
 
         inventoryMovement.setVariantsId(productVariants);
         inventoryMovement.setToShelvesId(toShelves);
+        inventoryMovement.setToWarehouseId(toShelves.getSectionsId().getWarehouseId());
         inventoryMovement.setFromShelvesId(fromShelves);
+        inventoryMovement.setFromWarehouseId(fromShelves.getSectionsId().getWarehouseId());
         inventoryMovement.setRefrenceId(user.getId());
         inventoryMovement.setMovementType(MovementType.TRANSFERING_IN);
         inventoryMovement.setCreatedAt(LocalDateTime.now());
@@ -283,7 +288,6 @@ public class InventoryMovementService {
 
         Sections sections = sectionsRepository.findById(toShelves.getSectionsId().getSectionsId()).orElseThrow(() -> new RuntimeException("بخش مقصد یافت نشد !"));
 
-        // دریافت موجودی‌های فعال این ورینت در انبار
         List<InventoryStock> sourceStocks = inventoryStockRepository
                 .findByVariantsId_VariantIdAndShelvesId_SectionsId_WarehouseIdAndIsActive(
                         variantId, fromWarehouse, true
@@ -293,10 +297,8 @@ public class InventoryMovementService {
             throw new RuntimeException("موجودی فعالی برای این کالا در انبار مبدا یافت نشد !");
         }
 
-        // مرتب‌سازی بر اساس تاریخ آپدیت (قدیمی‌تر اول)
         sourceStocks.sort(Comparator.comparing(InventoryStock::getUpdatedAt));
 
-        // بررسی کافی بودن موجودی
         int totalAvailable = sourceStocks.stream()
                 .mapToInt(InventoryStock::getQuantityOnHand)
                 .sum();
@@ -307,7 +309,6 @@ public class InventoryMovementService {
 
         int remainingQty = quantity;
 
-        // کم کردن از قفسه‌ها به ترتیب قدیمی‌تر
         for (InventoryStock stock : sourceStocks) {
             if (remainingQty <= 0) break;
 
@@ -490,7 +491,6 @@ public class InventoryMovementService {
             throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
         }
 
-        // 1. دریافت لیست InventoryMovement با referenceId و SALE_RETURN_REQUEST
         List<InventoryMovement> movements = inventoryMovementRepository
                 .findByRefrenceIdAndMovementType(referenceId, MovementType.SALE_RETURN_REQUEST);
 
@@ -498,11 +498,9 @@ public class InventoryMovementService {
             Warehouse warehouse = movement.getToWarehouseId();
             ProductVariants variant = movement.getVariantsId();
 
-            // 2. پیدا کردن قفسه‌های برگشتی فعال در انبار
             List<Shelves> shelvesList = shelvesRepository.findBySectionsId_WarehouseIdAndIsReturnTrueAndIsActiveTrue(warehouse);
 
             for (Shelves shelf : shelvesList) {
-                // 3. بررسی InventoryStock برای این قفسه و این وریانت
                 Optional<InventoryStock> stockOpt = inventoryStockRepository.findByVariantsIdAndShelvesIdAndIsActiveTrue(variant, shelf);
 
                 if (stockOpt.isPresent()) {

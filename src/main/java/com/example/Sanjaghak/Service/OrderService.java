@@ -103,11 +103,9 @@ public class OrderService {
             UUID variantId = originalItem.getVariantId().getVariantId();
             int quantity = originalItem.getQuantity();
 
-            // 1. ابتدا انبار مرکزی فعال را بررسی می‌کنیم
             Warehouse centralWarehouse = warehouseRepository.findByIsCentralAndIsActive(true, true)
                     .orElseThrow(() -> new RuntimeException("انبار مرکزی فعال پیدا نشد"));
 
-            // موجودی فعال در انبار مرکزی
             List<InventoryStock> centralStocks = inventoryStockRepository
                     .findByVariantsId_VariantIdAndShelvesId_SectionsId_WarehouseIdAndIsActive(
                             variantId, centralWarehouse, true);
@@ -118,15 +116,12 @@ public class OrderService {
                         variantId, quantity, centralStocks, centralWarehouse, null, newOrder.getOrderId(), userId);
             }
 
-            // اگر موجودی انبار مرکزی کافی نبود، به دنبال انبارهای فعال دیگر می‌گردیم
             int remainingQuantity = quantity - reservedFromCentral;
             if (remainingQuantity > 0) {
-                // انبارهای غیر مرکزی فعال را بررسی می‌کنیم
                 List<InventoryStock> otherStocks = inventoryStockRepository
                         .findByVariantsId_VariantIdAndShelvesId_SectionsId_WarehouseIdIsActiveAndNotCentral(
                                 variantId);
 
-                // انبارها را بر اساس تاریخ به‌روزرسانی (قدیمی‌ترین اول) مرتب می‌کنیم
                 otherStocks.sort(Comparator.comparing(InventoryStock::getUpdatedAt));
 
                 for (InventoryStock stock : otherStocks) {
@@ -136,13 +131,11 @@ public class OrderService {
                     int qtyToReserve = Math.min(availableQty, remainingQuantity);
 
                     if (qtyToReserve > 0) {
-                        // موجودی را رزرو می‌کنیم
                         stock.setReservedInventory(stock.getReservedInventory() + qtyToReserve);
                         stock.setQuantityOnHand(stock.getQuantityOnHand() - qtyToReserve);
                         stock.setUpdatedAt(LocalDateTime.now());
                         inventoryStockRepository.save(stock);
 
-                        // رکورد حرکت انبار ایجاد می‌کنیم
                         createInventoryMovement(
                                 variantId,
                                 stock.getShelvesId().getSectionsId().getWarehouseId(),
@@ -225,13 +218,11 @@ public class OrderService {
             int qtyToReserve = Math.min(availableQty, requiredQuantity - totalReserved);
 
             if (qtyToReserve > 0) {
-                // موجودی را رزرو می‌کنیم
                 stock.setReservedInventory(stock.getReservedInventory() + qtyToReserve);
                 stock.setQuantityOnHand(stock.getQuantityOnHand() - qtyToReserve);
                 stock.setUpdatedAt(LocalDateTime.now());
                 inventoryStockRepository.save(stock);
 
-                // رکورد حرکت انبار ایجاد می‌کنیم
                 createInventoryMovement(
                         variantId,
                         warehouse,
@@ -329,14 +320,12 @@ public class OrderService {
         if (!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("staff")) {
             throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
         }
-        // 1. پیدا کردن تمام رکوردهای InventoryMovement مربوط به این سفارش
         List<InventoryMovement> movements = inventoryMovementRepository.findByRefrenceId(orderId);
 
         if (movements.isEmpty()) {
             throw new RuntimeException("هیچ رکوردی برای این سفارش یافت نشد");
         }
 
-        // 2. بررسی اینکه آیا تمام رکوردها وضعیت ORDER دارند
         boolean allAreOrder = movements.stream()
                 .allMatch(m -> m.getMovementType() == MovementType.ORDER);
 
@@ -344,21 +333,17 @@ public class OrderService {
             throw new RuntimeException("تمام رکوردهای مربوط به سفارش باید وضعیت سفارش داشته باشند");
         }
 
-        // 3. تغییر وضعیت به SALE و بروزرسانی موجودی
         for (InventoryMovement movement : movements) {
-            // کاهش موجودی رزرو شده
             updateReservedInventory(
                     movement.getVariantsId(),
                     movement.getFromShelvesId(),
                     movement.getQuantity()
             );
 
-            // تغییر وضعیت
             movement.setMovementType(MovementType.SALE_OUT);
             inventoryMovementRepository.save(movement);
         }
 
-        // 4. بروزرسانی وضعیت سفارش (در صورت نیاز)
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("سفارش یافت نشد"));
         order.setOrderStatus(OrderStatus.delivered);
@@ -390,28 +375,23 @@ public class OrderService {
         InventoryMovement movement = inventoryMovementRepository.findById(movementId)
                 .orElseThrow(() -> new RuntimeException("Inventory Movement not found"));
 
-        // بررسی وضعیت
         if (movement.getMovementType() != MovementType.ORDER_REQUEST) {
             throw new IllegalStateException("شما مجوز لازم برای انجام این انتقال رو ندارید!");
         }
 
-        // پیدا کردن استوک قفسه
         InventoryStock stock = inventoryStockRepository
                 .findByShelvesIdAndVariantsId(movement.getFromShelvesId(), movement.getVariantsId())
                 .orElseThrow(() -> new RuntimeException("موجودی رزور شده ای برای این انتقال یافت نشد !"));
 
-        // کم کردن موجودی رزرو شده
         if (stock.getReservedInventory() < movement.getQuantity()) {
             throw new IllegalStateException("موجودی رزرو شده ناکافی هست !");
         }
-        // تغییر وضعیت به ORDER
         movement.setMovementType(MovementType.ORDER);
         inventoryMovementRepository.save(movement);
         inventoryStockRepository.save(stock);
     }
 
     public void cancelOrder(UUID referenceId){
-        // جستجو در جدول InventoryMovement
         List<InventoryMovement> movements = inventoryMovementRepository.findByRefrenceId(referenceId);
 
         if (movements.isEmpty()) {
@@ -420,15 +400,12 @@ public class OrderService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        // مرحله 1: بررسی شرایط همه رکوردها
         for (InventoryMovement movement : movements) {
 
-            // 1. بررسی تاریخ
             if (movement.getCreatedAt().isBefore(now.minusDays(10))) {
                 throw new IllegalStateException("بیش از 10 روز از ایجاد این رکورد گذشته است");
             }
 
-            // 2. بررسی toWarehouseId و وضعیت
             if (movement.getToWarehouseId() != null) {
                 if (!movement.getMovementType().equals(MovementType.ORDER_REQUEST)) {
                     throw new IllegalStateException("امکان لغو سفارش وجود ندارد");
@@ -440,7 +417,6 @@ public class OrderService {
             }
         }
 
-        // مرحله 2: به‌روزرسانی InventoryStock
         for (InventoryMovement movement : movements) {
             InventoryStock stock = inventoryStockRepository.findByVariantsIdAndShelvesId(
                     movement.getVariantsId(), movement.getFromShelvesId()
@@ -455,7 +431,6 @@ public class OrderService {
             inventoryStockRepository.save(stock);
         }
 
-        // مرحله 3: تغییر وضعیت همه رکوردها به CANCEL_ORDER
         for (InventoryMovement movement : movements) {
             movement.setMovementType(MovementType.CANCEL_ORDER);
             inventoryMovementRepository.save(movement);
@@ -504,7 +479,7 @@ public class OrderService {
 
         do {
             String datePart = LocalDate.now().format(formatter);
-            int randomPart = (int) (Math.random() * 9000) + 1000; // عدد ۴ رقمی بین 1000 تا 9999
+            int randomPart = (int) (Math.random() * 9000) + 1000;
             orderNumber = "ORD-" + datePart + "-" + randomPart;
         } while (ordersRepository.existsByOrderNumber(orderNumber));
 
@@ -586,6 +561,10 @@ public class OrderService {
 //        }
 //        Orders delete = ordersRepository.findById(orderId).orElseThrow((() -> new EntityNotFoundException("سفارش مورد نظر پیدا نشد !")));
 //        ordersRepository.delete(delete);
-//    }
+//     }
+
+    public List<Products> getTopSellingActiveProducts() {
+        return inventoryMovementRepository.findTopSellingActiveProducts();
+    }
 
 }

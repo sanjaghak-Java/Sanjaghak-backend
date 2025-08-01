@@ -3,6 +3,7 @@ package com.example.Sanjaghak.Controller;
 import com.example.Sanjaghak.Service.OrderService;
 import com.example.Sanjaghak.model.InventoryMovement;
 import com.example.Sanjaghak.model.Orders;
+import com.example.Sanjaghak.model.Products;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -222,5 +223,10 @@ public class OrderController {
 //
 //        }
 //    }
+
+    @GetMapping("/top-selling")
+    public ResponseEntity<List<Products>> getTopSellingActiveProducts() {
+        return ResponseEntity.ok(orderService.getTopSellingActiveProducts());
+    }
 
 }

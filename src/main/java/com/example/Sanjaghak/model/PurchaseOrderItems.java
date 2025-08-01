@@ -4,6 +4,7 @@ package com.example.Sanjaghak.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -25,6 +26,16 @@ public class PurchaseOrderItems {
     @JoinColumn(name = "purchase_orders_id", nullable = false)
     @JsonIgnoreProperties({"status","warehouseId","suppliersId","subTotal","shippingCost","taxAmount","totalAmount" ,"orderDate","expectedDate" })
     private PurchaseOrders purchaseOrdersId;
+
+    private BigDecimal unitPrice;
+
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
 
     public UUID getPurchaseOrderItemsId() {
         return purchaseOrderItemsId;

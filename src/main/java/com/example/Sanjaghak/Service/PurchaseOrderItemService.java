@@ -68,6 +68,7 @@ public class PurchaseOrderItemService {
 
         purchaseOrderItems.setPurchaseOrdersId(purchaseOrders);
         purchaseOrderItems.setVariantsId(productVariants);
+        purchaseOrderItems.setUnitPrice(unitPrice);
         return purchaseOrderItemsRepository.save(purchaseOrderItems);
     }
 
