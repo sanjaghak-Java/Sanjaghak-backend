@@ -1,8 +1,10 @@
 package com.example.Sanjaghak.Service;
 
+import com.example.Sanjaghak.Repository.InventoryStockRepository;
 import com.example.Sanjaghak.Repository.SectionsRepository;
 import com.example.Sanjaghak.Repository.ShelvesRepository;
 import com.example.Sanjaghak.Repository.WarehouseRepository;
+import com.example.Sanjaghak.model.InventoryStock;
 import com.example.Sanjaghak.model.Sections;
 import com.example.Sanjaghak.model.Shelves;
 import com.example.Sanjaghak.model.Warehouse;
@@ -27,6 +29,9 @@ public class SectionService {
 
     @Autowired
     private ShelvesRepository shelvesRepository;
+
+    @Autowired
+    private InventoryStockRepository inventoryStockRepository;
 
     public Sections createSections(Sections sections, UUID warehouseId, String token) {
         UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
@@ -108,6 +113,29 @@ public class SectionService {
                 String newCode = String.format("%s-%03d", newPrefix, counter++);
                 shelf.setShelvesCode(newCode);
                 shelvesRepository.save(shelf);
+            }
+        }
+
+        if(!exist.getActive().equals(sections.getActive())){
+            if(exist.getActive().equals(true)){
+                exist.setActive(false);
+                List<Shelves> shelvesList = shelvesRepository.findBySectionsId(exist);
+                List<InventoryStock> inventoryStockList = inventoryStockRepository.findByShelvesIdIn(shelvesList);
+
+                for(Shelves shelf :shelvesList ){
+                    shelf.setActive(false);
+                }
+                shelvesRepository.saveAll(shelvesList);
+
+                for(InventoryStock inventoryStock: inventoryStockList){
+                    inventoryStock.setActive(false);
+                }
+                inventoryStockRepository.saveAll(inventoryStockList);
+            }else{
+                if(exist.getWarehouseId().getIsActive().equals(false)){
+                    throw new RuntimeException("نمی توان بدون فعال کردن انبار بخش مربوط به ان انبار را فعال کرد !");
+                }
+                exist.setActive(true);
             }
         }
 

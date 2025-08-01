@@ -1,8 +1,10 @@
 package com.example.Sanjaghak.Service;
 
+import com.example.Sanjaghak.Repository.InventoryStockRepository;
+import com.example.Sanjaghak.Repository.SectionsRepository;
+import com.example.Sanjaghak.Repository.ShelvesRepository;
 import com.example.Sanjaghak.Repository.WarehouseRepository;
-import com.example.Sanjaghak.model.Suppliers;
-import com.example.Sanjaghak.model.Warehouse;
+import com.example.Sanjaghak.model.*;
 import com.example.Sanjaghak.security.jwt.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,15 @@ public class WarehouseService {
 
     @Autowired
     private WarehouseRepository warehouseRepository;
+
+    @Autowired
+    private SectionsRepository sectionsRepository;
+
+    @Autowired
+    private ShelvesRepository shelvesRepository;
+
+    @Autowired
+    private InventoryStockRepository inventoryStockRepository;
 
     public Warehouse createWarehouse(Warehouse warehouse,String token) {
         UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
@@ -69,15 +80,42 @@ public class WarehouseService {
             }
         }
 
-        if(!warehouseRepository.existsByPhone(warehouse.getPhone())){
+        if(!exist.getPhone().equals(warehouse.getPhone())){
             if(warehouseRepository.existsByPhone(warehouse.getPhone())){
                 throw new RuntimeException("انباری با این شماره موبایل ثبت شده است !");
             }
         }
 
-        if(warehouseRepository.existsByPostalCode(warehouse.getPostalCode())){
+        if(!exist.getPostalCode().equals(warehouse.getPostalCode())){
             if(warehouseRepository.existsByPostalCode(warehouse.getPostalCode())){
                 throw new RuntimeException("انباری با این کد پستی ثبت شده است !");
+            }
+        }
+
+        if(!exist.getIsActive().equals(warehouse.getIsActive())){
+            if (exist.getIsActive().equals(true)) {
+                exist.setIsActive(false);
+
+                List<Sections> sectionslist = sectionsRepository.findByWarehouseId(exist);
+                List<Shelves> shelvesList = shelvesRepository.findBySectionsIdIn(sectionslist);
+                List<InventoryStock> inventoryStockList = inventoryStockRepository.findByShelvesIdIn(shelvesList);
+
+                for (Sections section : sectionslist) {
+                    section.setActive(false);
+                }
+                sectionsRepository.saveAll(sectionslist);
+
+                for(Shelves shelf :shelvesList ){
+                    shelf.setActive(false);
+                }
+                shelvesRepository.saveAll(shelvesList);
+
+                for(InventoryStock inventoryStock: inventoryStockList){
+                    inventoryStock.setActive(false);
+                }
+                inventoryStockRepository.saveAll(inventoryStockList);
+            }else{
+                exist.setIsActive(true);
             }
         }
 

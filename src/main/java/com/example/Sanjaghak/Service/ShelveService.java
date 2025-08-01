@@ -1,13 +1,11 @@
 package com.example.Sanjaghak.Service;
 
 import com.example.Sanjaghak.Enum.User_role;
+import com.example.Sanjaghak.Repository.InventoryStockRepository;
 import com.example.Sanjaghak.Repository.SectionsRepository;
 import com.example.Sanjaghak.Repository.ShelvesRepository;
 import com.example.Sanjaghak.Repository.UserAccountsRepository;
-import com.example.Sanjaghak.model.Sections;
-import com.example.Sanjaghak.model.Shelves;
-import com.example.Sanjaghak.model.UserAccounts;
-import com.example.Sanjaghak.model.Warehouse;
+import com.example.Sanjaghak.model.*;
 import com.example.Sanjaghak.security.jwt.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,9 @@ public class ShelveService {
 
     @Autowired
     private UserAccountsRepository userAccountsRepository;
+
+    @Autowired
+    private InventoryStockRepository inventoryStockRepository;
 
     public Shelves createShelves(Shelves shelves , UUID userId , UUID sectionsId , String token) {
 
@@ -157,6 +158,24 @@ public class ShelveService {
                         shelvesRepository.save(s);
                     }
                 }
+            }
+        }
+
+        if(!existingShelf.getActive().equals(shelves.getActive())){
+            if(existingShelf.getActive().equals(true)){
+                existingShelf.setActive(false);
+                List<InventoryStock> inventoryStockList = inventoryStockRepository.
+                        findInventoryStockByShelvesId(existingShelf);
+
+                for(InventoryStock inventoryStock: inventoryStockList){
+                    inventoryStock.setActive(false);
+                }
+                inventoryStockRepository.saveAll(inventoryStockList);
+            }else {
+                if(existingShelf.getSectionsId().getActive().equals(false)){
+                    throw new RuntimeException("نمی توان بدون فعال کردن بخش مربوط ، قفسه را فعال کرد !");
+                }
+                existingShelf.setActive(true);
             }
         }
 

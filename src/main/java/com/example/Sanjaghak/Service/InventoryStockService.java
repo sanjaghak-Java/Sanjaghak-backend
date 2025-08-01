@@ -84,6 +84,17 @@ public class InventoryStockService {
         UserAccounts creator = userAccountsRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("کاربر پیدا نشد!"));
 
+        if(!exist.getActive().equals(inventoryStock.getActive())){
+            if(exist.getActive().equals(true)){
+                exist.setActive(false);
+            }else{
+                if(exist.getShelvesId().getActive().equals(false)){
+                    throw new RuntimeException("بدون فعال کردن قفسه مربوط ،نمی توان موجودی را فعال کرد!");
+                }
+                exist.setActive(true);
+            }
+        }
+
         exist.setUpdatedBy(creator);
         exist.setUpdatedAt(LocalDateTime.now());
         exist.setMaximumLevel(inventoryStock.getMaximumLevel());

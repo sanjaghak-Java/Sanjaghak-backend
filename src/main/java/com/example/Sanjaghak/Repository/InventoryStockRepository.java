@@ -54,4 +54,6 @@ public interface InventoryStockRepository extends JpaRepository<InventoryStock, 
     Optional<InventoryStock> findByVariantsIdAndShelvesIdAndIsActiveTrue(ProductVariants variants, Shelves shelves);
 
     List<InventoryStock> findByShelvesId_IsReturnTrue();
+
+    List<InventoryStock> findInventoryStockByShelvesId(Shelves shelves);
 }
