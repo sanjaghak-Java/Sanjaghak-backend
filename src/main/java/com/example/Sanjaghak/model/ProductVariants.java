@@ -38,6 +38,8 @@ public class ProductVariants {
 
     private LocalDateTime updatedAt;
 
+    private Boolean isActive;
+
     @PrePersist
     public void ensureOrderStatus() {
         if(createdAt == null) {
@@ -45,6 +47,9 @@ public class ProductVariants {
         }
         if(updatedAt == null) {
             updatedAt = LocalDateTime.now();
+        }
+        if(isActive == null) {
+            isActive = true;
         }
     }
 
@@ -119,4 +124,19 @@ public class ProductVariants {
     public void setProductId(Products productId) {
         this.productId = productId;
     }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public ProductVariants(UUID variantId) {
+        this.variantId = variantId;
+    }
+    public ProductVariants() {
+    }
+
 }

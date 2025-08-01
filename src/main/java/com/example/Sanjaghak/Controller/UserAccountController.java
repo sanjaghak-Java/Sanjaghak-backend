@@ -3,6 +3,7 @@ package com.example.Sanjaghak.Controller;
 import com.example.Sanjaghak.Enum.User_role;
 import com.example.Sanjaghak.Repository.UserAccountsRepository;
 import com.example.Sanjaghak.Service.CustomerService;
+import com.example.Sanjaghak.Service.OrderService;
 import com.example.Sanjaghak.Service.UserAccountsService;
 import com.example.Sanjaghak.Service.VerificationService;
 import com.example.Sanjaghak.model.Categories;
@@ -10,6 +11,7 @@ import com.example.Sanjaghak.model.Customer;
 import com.example.Sanjaghak.model.UserAccounts;
 import com.example.Sanjaghak.model.VerificationToken;
 import com.example.Sanjaghak.security.jwt.JwtUtil;
+import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,9 @@ public class UserAccountController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private OrderService orderService;
 
     public UserAccountController(UserAccountsService userAccountsService, VerificationService verificationService) {
         this.userAccountsService = userAccountsService;
@@ -73,6 +78,7 @@ public class UserAccountController {
             request.setRole(User_role.customer);
             UserAccounts userAccounts = userAccountsService.register(request);
             customerService.saveCustomer(userAccounts.getId());
+            orderService.createOrder(userAccounts.getId());
             String jwtToken = JwtUtil.generateToken(userAccounts);
             return ResponseEntity.ok(Map.of(
                     "message", "ورود موفقیت‌آمیز بود",

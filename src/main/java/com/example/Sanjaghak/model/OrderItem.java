@@ -21,7 +21,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "variant_id", nullable = false)
-    @JsonIgnoreProperties({"sku","price","costPrice","color","hexadecimal","productId","createdAt", "updatedAt"})
+    @JsonIgnoreProperties({"sku","active","price","costPrice","color","hexadecimal","productId","createdAt", "updatedAt"})
     private ProductVariants variantId;
 
     private int quantity;
@@ -45,6 +45,15 @@ public class OrderItem {
         }
         if (discountAmount == null) {
             discountAmount = BigDecimal.ZERO;
+        }
+        if (unitPrice == null) {
+            unitPrice = BigDecimal.ZERO;
+        }
+        if (subTotal == null) {
+            subTotal = BigDecimal.ZERO;
+        }
+        if (totalAmount == null) {
+            totalAmount = BigDecimal.ZERO;
         }
         if(createdAt == null) {
             createdAt = LocalDateTime.now();

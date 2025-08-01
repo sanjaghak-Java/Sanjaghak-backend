@@ -1,0 +1,26 @@
+package com.example.Sanjaghak.Enum;
+
+public enum MovementType {
+    PURCHASE_IN,
+
+    SALE_OUT,
+
+    TRANSFERING_IN,
+
+    SALE_RETURN_IN,
+    SALE_RETURN_REQUEST,
+    SALE_RETURN_OUT,
+
+    ADJUSTMENT_IN,
+    ADJUSTMENT_OUT,
+
+    ORDER,
+    ORDER_REQUEST,
+    CANCEL_ORDER,
+
+    REQUEST_TRANSFER,
+    SHIPPING_TRANSFER,
+    TRANSFERING_OUT,
+    CANCEL_TRANSFER,
+
+}

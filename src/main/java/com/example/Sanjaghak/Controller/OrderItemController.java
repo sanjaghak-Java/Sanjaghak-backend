@@ -23,12 +23,11 @@ public class OrderItemController {
 
     @PostMapping("/orderItemRegistration")
     public ResponseEntity<?> orderItemRegistration(@RequestBody OrderItem orderItem,
-                                                   @RequestParam UUID orderId,
                                                    @RequestParam UUID productId,
                                                    @RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.replace("Bearer ", "");
-            OrderItem save = orderItemService.addOrderItem(orderItem, orderId,productId, token);
+            OrderItem save = orderItemService.addOrderItem(orderItem,productId, token);
             return ResponseEntity.ok(save);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -50,12 +49,10 @@ public class OrderItemController {
     @PutMapping("{id}")
     public ResponseEntity<?> updateOrderItem(@PathVariable UUID id,
                                              @RequestBody OrderItem orderItem,
-                                             @RequestParam UUID orderId,
-                                             @RequestParam UUID productId,
                                              @RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.replace("Bearer ", "");
-            OrderItem update = orderItemService.updateOrderItem(id, orderItem, orderId,productId, token);
+            OrderItem update = orderItemService.updateOrderItem(id, orderItem, token);
             return ResponseEntity.ok(update);
         }catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT)

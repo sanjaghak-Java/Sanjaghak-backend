@@ -1,7 +1,6 @@
 package com.example.Sanjaghak.Service;
 
 import com.example.Sanjaghak.Repository.SuppliersRepository;
-import com.example.Sanjaghak.model.ProductVariants;
 import com.example.Sanjaghak.model.Suppliers;
 import com.example.Sanjaghak.security.jwt.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -50,6 +49,10 @@ public class SupplierService {
         supplier.setSupplierEmail(suppliers.getSupplierEmail());
         supplier.setSupplierPhone(suppliers.getSupplierPhone());
         supplier.setSupplierAddress(suppliers.getSupplierAddress());
+        supplier.setCity(suppliers.getCity());
+        supplier.setState(suppliers.getState());
+        supplier.setCountry(suppliers.getCountry());
+        supplier.setPostalCode(suppliers.getPostalCode());
         supplier.setUpdatedAt(LocalDateTime.now());
 
         return suppliersRepository.save(supplier);

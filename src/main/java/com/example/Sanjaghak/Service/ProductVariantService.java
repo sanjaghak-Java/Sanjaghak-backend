@@ -135,8 +135,10 @@ public ProductVariants updateProductVariant(UUID productVariantId,ProductVariant
     }
 
     public void deleteProductVariant(UUID productVariantId,String token) {
+
         UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
         String role = JwtUtil.extractUserRole(token);
+
         if (!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("manager")) {
             throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
         }

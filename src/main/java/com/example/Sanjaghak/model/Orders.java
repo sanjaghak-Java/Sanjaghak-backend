@@ -21,39 +21,29 @@ public class Orders {
     @JsonIgnoreProperties({"userId", "createdAt", "updatedAt"})
     private Customer customerId;
 
-    @Column(nullable = false,unique = true)
+    @Column(unique = true)
     private String orderNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private PaymentStatus paymentStatus;
-//
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private PaymentMethod paymentMethod;
-
     @ManyToOne
-    @JoinColumn(name = "billing_Address_Id", nullable = false)
-    @JsonIgnoreProperties({"customerId", "addressLine1", "addressLine2","city","state","country","postalCode","phone","createdAt","updatedAt"})
+    @JoinColumn(name = "billing_Address_Id", nullable = true)
+    @JsonIgnoreProperties(
+            value = {"customerId", "addressLine1", "addressLine2","city","state","country","postalCode","phone","createdAt","updatedAt"},
+            allowSetters = true
+    )
     private CustomerAddress billingAddressId;
 
-    @Column(nullable = false)
     private BigDecimal subTotal;        // مجموع قیمت کالاها بدون مالیات و تخفیف
 
-    @Column(nullable = false)
     private BigDecimal shippingCost;    // هزینه ارسال
 
-    @Column(nullable = false)
     private BigDecimal taxAmount;       // مالیات
 
-    @Column(nullable = false)
     private BigDecimal discountAmount;  // مقدار تخفیف
 
-    @Column(nullable = false)
     private BigDecimal totalAmount;     // مبلغ نهایی بعد از همه موارد بالا
 
     private String notes;
@@ -67,12 +57,6 @@ public class Orders {
         if (orderStatus == null) {
             orderStatus = OrderStatus.pending;
         }
-//        if (paymentStatus == null) {
-//            paymentStatus = PaymentStatus.pending;
-//        }
-//        if (paymentMethod == null) {
-//            paymentMethod = PaymentMethod.bankTransfer;
-//        }
         if (shippingCost == null) {
             shippingCost = BigDecimal.ZERO;
         }
@@ -81,6 +65,12 @@ public class Orders {
         }
         if (discountAmount == null) {
             discountAmount = BigDecimal.ZERO;
+        }
+        if (subTotal == null) {
+            subTotal = BigDecimal.ZERO;
+        }
+        if (totalAmount == null) {
+            totalAmount = BigDecimal.ZERO;
         }
         if(createdAt == null) {
             createdAt = LocalDateTime.now();
@@ -194,19 +184,4 @@ public class Orders {
         this.updatedAt = updatedAt;
     }
 
-//    public PaymentMethod getPaymentMethod() {
-//        return paymentMethod;
-//    }
-//
-//    public void setPaymentMethod(PaymentMethod paymentMethod) {
-//        this.paymentMethod = paymentMethod;
-//    }
-//
-//    public PaymentStatus getPaymentStatus() {
-//        return paymentStatus;
-//    }
-//
-//    public void setPaymentStatus(PaymentStatus paymentStatus) {
-//        this.paymentStatus = paymentStatus;
-//    }
 }
