@@ -31,7 +31,7 @@ public class ProductVariants {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    @JsonIgnoreProperties({"productName","productDescription","model","active","weight","length","width","height","createdBy","updatedBy","categories","brands","createdAt", "updatedAt"})
+    @JsonIgnoreProperties({"productDescription","model","active","weight","length","width","height","createdBy","updatedBy","categories","brands","createdAt", "updatedAt"})
     private Products productId;
 
     private LocalDateTime createdAt;

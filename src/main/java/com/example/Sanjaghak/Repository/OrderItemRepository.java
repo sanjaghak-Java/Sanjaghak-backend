@@ -20,6 +20,8 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, UUID>, Jpa
 
     List<OrderItem> findByOrderId(Orders orderId);
 
+    List<OrderItem> findByOrderId_OrderId(UUID orderId);
+
     @Query("SELECT COALESCE(SUM(oi.quantity), 0) " +
             "FROM OrderItem oi " +
             "JOIN oi.orderId o " +

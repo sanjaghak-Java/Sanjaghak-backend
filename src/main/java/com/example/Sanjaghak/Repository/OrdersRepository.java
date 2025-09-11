@@ -54,6 +54,8 @@ public interface OrdersRepository extends JpaRepository<Orders, UUID>, JpaSpecif
     List<Orders> findByOrderStatusAndCreatedAtBetween(
             OrderStatus status, LocalDateTime start, LocalDateTime end);
 
+    Optional<Orders> findByOrderId(UUID orderId);
+
 
 
 

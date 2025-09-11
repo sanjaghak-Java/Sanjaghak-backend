@@ -125,7 +125,7 @@ public class DiscountService {
     public Discount getMaxActiveDiscountByProduct(UUID productId) {
         List<Discount> discounts = discountRepository.findTopDiscountByProductOrderByPercentageDesc(productId);
         if (discounts.isEmpty()) {
-            return null;
+            return null ;
         }
         return discounts.get(0); // بیشترین تخفیف
     }
