@@ -99,6 +99,7 @@ public class PurchaseOrderService {
                         .add(safe(updatedPurchaseOrders.getTaxAmount()))
         );
 
+        existing.setStatus(updatedPurchaseOrders.getStatus());
         existing.setWarehouseId(warehouse);
         existing.setSuppliersId(suppliers);
         existing.setExpectedDate(updatedPurchaseOrders.getExpectedDate());
