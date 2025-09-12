@@ -23,20 +23,32 @@ public interface OrdersRepository extends JpaRepository<Orders, UUID>, JpaSpecif
     // پیدا کردن سفارش‌های با وضعیت processing
     List<Orders> findByOrderStatus(OrderStatus orderStatus);
 
-    // پیدا کردن سفارش‌های با وضعیت processing که تمام آیتم‌هایشان در InventoryMovement وجود دارد
-    @Query("SELECT o FROM Orders o " +
-            "WHERE o.orderStatus = com.example.Sanjaghak.Enum.OrderStatus.processing " +
-            "AND NOT EXISTS (" +
-            "    SELECT 1 FROM OrderItem oi " +
-            "    WHERE oi.orderId = o " +
-            "    AND NOT EXISTS (" +
-            "        SELECT 1 FROM InventoryMovement im " +
-            "        WHERE im.refrenceId = o.orderId " +
-            "        AND im.movementType = com.example.Sanjaghak.Enum.MovementType.ORDER" +
-            "        AND im.variantsId = oi.variantId" +
-            "    )" +
-            ")")
+//    // پیدا کردن سفارش‌های با وضعیت processing که تمام آیتم‌هایشان در InventoryMovement وجود دارد
+//    @Query("SELECT o FROM Orders o " +
+//            "WHERE o.orderStatus = com.example.Sanjaghak.Enum.OrderStatus.processing " +
+//            "AND NOT EXISTS (" +
+//            "    SELECT 1 FROM OrderItem oi " +
+//            "    WHERE oi.orderId = o " +
+//            "    AND NOT EXISTS (" +
+//            "        SELECT 1 FROM InventoryMovement im " +
+//            "        WHERE im.refrenceId = o.orderId " +
+//            "        AND im.movementType = com.example.Sanjaghak.Enum.MovementType.ORDER" +
+//            "        AND im.variantsId = oi.variantId" +
+//            "    )" +
+//            ")")
+//    List<Orders> findProcessingOrdersWithCompleteInventoryMovements();
+
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE o.orderStatus = com.example.Sanjaghak.Enum.OrderStatus.processing
+      AND NOT EXISTS (
+          SELECT 1 FROM InventoryMovement im
+          WHERE im.refrenceId = o.orderId
+            AND im.movementType <> com.example.Sanjaghak.Enum.MovementType.ORDER
+      )
+""")
     List<Orders> findProcessingOrdersWithCompleteInventoryMovements();
+
 
     List<Orders> findAllByCustomerIdAndOrderStatus(Customer customerId, OrderStatus orderStatus);
 
