@@ -28,14 +28,22 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, UUID>, Jpa
             "WHERE o.orderStatus = 'delivered' AND oi.createdAt BETWEEN :startDate AND :endDate")
     Integer getTotalQuantity(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query("""
+//    @Query("""
+//    SELECT oi FROM OrderItem oi
+//    WHERE oi.variantId = :variantId
+//      AND oi.createdAt < :startDate
+//""")
+//    List<OrderItem> findByVariantIdAndOrderIdCreatedAtBefore(
+//            ProductVariants variant, LocalDateTime beforeDate);
+@Query("""
     SELECT oi FROM OrderItem oi
     WHERE oi.variantId = :variantId
       AND oi.createdAt < :startDate
 """)
+List<OrderItem> findByVariantIdAndOrderIdCreatedAtBefore(
+        @Param("variantId") ProductVariants variant,
+        @Param("startDate") LocalDateTime startDate);
 
-    List<OrderItem> findByVariantIdAndOrderIdCreatedAtBefore(
-            ProductVariants variant, LocalDateTime beforeDate);
 
 
 

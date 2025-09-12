@@ -111,7 +111,7 @@ public class ReportService {
         BigDecimal totalProfit = BigDecimal.ZERO;
 
         List<Orders> deliveredOrders = ordersRepository.findByOrderStatusAndCreatedAtBetween(
-                OrderStatus.delivered, startDate, endDate);
+                 OrderStatus.delivered,startDate, endDate);
 
         for (Orders order : deliveredOrders) {
             List<OrderItem> orderItems = orderItemRepository.findByOrderId(order);

@@ -54,8 +54,11 @@ public class ReportController {
 
     @GetMapping("/calculate")
     public BigDecimal calculateProfit(
-            @RequestParam("startDate") LocalDateTime startDate,
-            @RequestParam("endDate") LocalDateTime endDate) {
+            @RequestParam("startDate")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+
+            @RequestParam("endDate")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         return reportService.calculateProfit(startDate, endDate);
     }
 

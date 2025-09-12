@@ -57,14 +57,26 @@ public interface OrdersRepository extends JpaRepository<Orders, UUID>, JpaSpecif
             "from Orders o where o.orderStatus='delivered' and o.createdAt between :startDate and :endDate")
     Object[] getOrderSums(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
+//    @Query("""
+//    SELECT o FROM Orders o
+//    WHERE o.orderStatus = 'delivered'
+//      AND o.createdAt BETWEEN :startDate AND :endDate
+//""")
+//
+//    List<Orders> findByOrderStatusAndCreatedAtBetween(
+//            OrderStatus status, LocalDateTime start, LocalDateTime end);
+
     @Query("""
     SELECT o FROM Orders o
-    WHERE o.orderStatus = 'delivered'
+    WHERE o.orderStatus = :status
       AND o.createdAt BETWEEN :startDate AND :endDate
 """)
-
     List<Orders> findByOrderStatusAndCreatedAtBetween(
-            OrderStatus status, LocalDateTime start, LocalDateTime end);
+            @Param("status") OrderStatus status,
+            @Param("startDate") LocalDateTime start,
+            @Param("endDate") LocalDateTime end);
+
+
 
     Optional<Orders> findByOrderId(UUID orderId);
 
