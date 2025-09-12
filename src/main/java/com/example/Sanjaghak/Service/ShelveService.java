@@ -44,9 +44,9 @@ public class ShelveService {
         UserAccounts user = userAccountsRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("انباردار مورد نظر پیدا نشد !"));
 
-        if(!user.getRole().equals(User_role.staff)){
-            throw new RuntimeException("فقط می توانید یک انبار دار را مسئول یک قفسه کنید .");
-        }
+//        if(!user.getRole().equals(User_role.staff)){
+//            throw new RuntimeException("فقط می توانید یک انبار دار را مسئول یک قفسه کنید .");
+//        }
 
         if (Boolean.TRUE.equals(shelves.getReturn())) {
             Warehouse warehouse = sections.getWarehouseId();  // گرفتن انبار مربوط به سکشن

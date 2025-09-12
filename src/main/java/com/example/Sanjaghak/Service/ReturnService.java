@@ -210,7 +210,7 @@ public class ReturnService {
         UUID userId = UUID.fromString(JwtUtil.extractUserId(token));
         String role = JwtUtil.extractUserRole(token);
 
-        if (!role.equalsIgnoreCase("customer")) {
+        if (role.equalsIgnoreCase("customer")) {
             throw new RuntimeException("شما مجوز لازم برای انجام این عملیات را ندارید");
         }
 

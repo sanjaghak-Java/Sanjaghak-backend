@@ -20,7 +20,7 @@ public class SectionsController {
 
 
     @PostMapping("add")
-    public ResponseEntity<?> createSections(@RequestBody Sections sections , UUID warehouseId, @RequestHeader("Authorization") String authHeader ) {
+    public ResponseEntity<?> createSections(@RequestBody Sections sections ,@RequestParam UUID warehouseId, @RequestHeader("Authorization") String authHeader ) {
         try {
             String token = authHeader.replace("Bearer ", "");
             Sections save = sectionService.createSections(sections,warehouseId, token);
